@@ -76,9 +76,7 @@ export function getProjectStatusVariant(status: string): BadgeVariant {
     case 'Pre-Design': return 'muted';
     case 'Design': return 'info';
     case 'Bidding': return 'warning';
-    case 'Construction': return 'default';
     case 'Complete': return 'success';
-    case 'On Hold': return 'destructive';
     default: return 'default';
   }
 }

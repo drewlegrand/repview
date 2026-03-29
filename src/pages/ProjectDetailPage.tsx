@@ -13,7 +13,7 @@ import NewOpportunityDialog from '@/components/NewOpportunityDialog';
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
-const allStatuses = ['Pre-Design', 'Design', 'Bidding', 'Construction', 'Complete', 'On Hold'];
+const allStatuses = ['Pre-Design', 'Design', 'Bidding', 'Complete'];
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
