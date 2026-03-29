@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target, CloudIcon } from 'lucide-react';
+import OneDriveFileBrowser from '@/components/OneDriveFileBrowser';
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
@@ -149,6 +150,9 @@ export default function ProjectDetailPage() {
               <TabsTrigger value="opportunities">Opportunities ({relatedOpps.length})</TabsTrigger>
               <TabsTrigger value="orders">Orders ({relatedOrders.length})</TabsTrigger>
               <TabsTrigger value="activity">Activity ({relatedActivities.length})</TabsTrigger>
+              <TabsTrigger value="files" className="flex items-center gap-1.5">
+                <CloudIcon className="h-3.5 w-3.5" />Files
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="opportunities" className="mt-4">
@@ -208,6 +212,10 @@ export default function ProjectDetailPage() {
                   </div>
                 ))}
               </div>
+            </TabsContent>
+
+            <TabsContent value="files" className="mt-4">
+              <OneDriveFileBrowser projectName={project.name} />
             </TabsContent>
           </Tabs>
         </div>
