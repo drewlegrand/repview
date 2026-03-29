@@ -14,6 +14,7 @@ interface AppState {
   addOrder: (order: Order) => void;
   updateOrder: (id: string, updates: Partial<Order>) => void;
   moveOrderStatus: (id: string, newStatus: OrderStatus) => void;
+  moveOrderStage: (id: string, newStage: OrderStage) => void;
 }
 
 const fallbackState: AppState = {
