@@ -6,7 +6,7 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOppStageVariant, getOrderStageVariant } from '@/components/StatusBadge';
 import { OpportunityEditDialog } from '@/components/OpportunityEditDialog';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutGrid, List, ChevronRight, ChevronDown, Package } from 'lucide-react';
+import { Plus, LayoutGrid, List, ChevronRight, Package } from 'lucide-react';
 import NewOpportunityDialog from '@/components/NewOpportunityDialog';
 import type { Opportunity, OppStage, OrderStage } from '@/data/demo-data';
 
@@ -36,7 +36,6 @@ export default function OpportunitiesPage() {
   const navigate = useNavigate();
   const { opportunities, moveOpportunityStage, updateOpportunity } = useAppStore();
 
-  // Collect any custom stages from existing opportunities
   const customStages = opportunities
     .map(o => o.stage)
     .filter(s => !defaultOppStages.includes(s) && !orderStages.includes(s as any))
@@ -50,12 +49,9 @@ export default function OpportunitiesPage() {
     const destId = result.destination.droppableId;
     const oppId = result.draggableId;
 
-    // Check if dropping into an order stage column
     if ((orderStages as string[]).includes(destId)) {
-      // Move to Awarded + set order stage
       updateOpportunity(oppId, { stage: 'Awarded', orderStage: destId as OrderStage });
     } else {
-      // Moving to an opp stage — clear order stage if not Awarded
       if (destId !== 'Awarded') {
         updateOpportunity(oppId, { stage: destId as OppStage, orderStage: undefined });
       } else {
@@ -75,7 +71,7 @@ export default function OpportunitiesPage() {
     return (
       <Droppable droppableId={stage} key={stage}>
         {(provided, snapshot) => (
-          <div ref={provided.innerRef} {...provided.droppableProps} className="flex-shrink-0 w-64">
+          <div ref={provided.innerRef} {...provided.droppableProps} className={fillWidth ? 'min-w-0' : 'flex-shrink-0 w-64'}>
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
                 {isOrderStage && <Package className="h-3 w-3 text-muted-foreground" />}
@@ -125,6 +121,8 @@ export default function OpportunitiesPage() {
     );
   };
 
+  const visibleColumnCount = allOppStages.length + (showOrderStages ? orderStages.length : 0);
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="page-header">
@@ -149,30 +147,25 @@ export default function OpportunitiesPage() {
         <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex w-full pb-4 gap-0">
-            {/* Opportunity Stages - fills available space */}
-            <div className="flex gap-3 flex-1 min-w-0">
+          <div className="flex w-full items-stretch gap-3 pb-4">
+            <div
+              className="grid flex-1 min-w-0 gap-3"
+              style={{ gridTemplateColumns: `repeat(${visibleColumnCount}, minmax(0, 1fr))` }}
+            >
               {allOppStages.map(stage => renderKanbanColumn(stage, false, true))}
+              {showOrderStages && orderStages.map(stage => renderKanbanColumn(stage, true, true))}
             </div>
 
-            {/* Order Stages toggle + columns, pinned right */}
-            <div className="flex items-start shrink-0 ml-3">
-              <button
-                onClick={() => setShowOrderStages(!showOrderStages)}
-                className="flex flex-col items-center gap-1 px-2 py-3 rounded-lg border bg-card hover:bg-muted transition-colors self-stretch"
-                title={showOrderStages ? 'Collapse order stages' : 'Expand order stages'}
-              >
-                {showOrderStages ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground rotate-180" />}
-                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider [writing-mode:vertical-lr] rotate-180">
-                  Order Stages
-                </span>
-              </button>
-              {showOrderStages && (
-                <div className="flex gap-3 border-l pl-3 ml-2">
-                  {orderStages.map(stage => renderKanbanColumn(stage, true, false))}
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => setShowOrderStages(!showOrderStages)}
+              className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border bg-card px-2 py-3 hover:bg-muted transition-colors"
+              title={showOrderStages ? 'Collapse order stages' : 'Expand order stages'}
+            >
+              <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${showOrderStages ? '' : 'rotate-180'}`} />
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider [writing-mode:vertical-lr] rotate-180">
+                Order Stages
+              </span>
+            </button>
           </div>
         </DragDropContext>
       )}
