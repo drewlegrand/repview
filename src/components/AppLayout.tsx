@@ -67,7 +67,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         collapsed ? "w-16" : "w-60"
       )}>
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 h-14 border-b border-sidebar-border bg-card">
+        <div className="items-center gap-3 px-4 h-14 border-b bg-card border flex flex-row border-inherit">
           <div className="h-8 w-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
             <Building2 className="h-4 w-4 text-sidebar-primary-foreground" />
           </div>
@@ -80,7 +80,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-card">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-card border border-inherit">
           {navItems.map(item => {
             const active = location.pathname === item.path ||
               (item.path !== '/' && location.pathname.startsWith(item.path));
@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="h-14 bg-card border-b flex items-center justify-between px-6 shrink-0">
+        <header className="h-14 bg-card border-b flex items-center justify-between shrink-0 border-0 border-inherit px-[24px] mx-[2px]">
           <div className="flex items-center gap-3 flex-1 max-w-md">
             <button
               onClick={() => setCommandOpen(true)}
