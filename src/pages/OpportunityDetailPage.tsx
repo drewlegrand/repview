@@ -168,7 +168,7 @@ export default function OpportunityDetailPage() {
                   <div key={a.id} className="bg-card border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        <StatusBadge label={a.type} variant={a.type === 'Meeting' || a.type === 'Site Visit' ? 'blue' : a.type === 'Call' ? 'amber' : 'default'} />
+                        <StatusBadge label={a.type} variant={a.type === 'Meeting' || a.type === 'Site Visit' ? 'info' : a.type === 'Call' ? 'warning' : 'default'} />
                         <span className="text-sm font-medium">{a.subject}</span>
                       </div>
                       <span className="text-xs text-muted-foreground">{a.date}</span>
@@ -191,7 +191,7 @@ export default function OpportunityDetailPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-semibold">{fmt(q.total)}</span>
-                      <StatusBadge label={q.status} variant={q.status === 'Accepted' ? 'green' : q.status === 'Submitted' ? 'blue' : q.status === 'Draft' ? 'default' : 'amber'} />
+                      <StatusBadge label={q.status} variant={q.status === 'Accepted' ? 'success' : q.status === 'Submitted' ? 'info' : q.status === 'Draft' ? 'default' : 'warning'} />
                     </div>
                   </div>
                 ))}
@@ -208,7 +208,7 @@ export default function OpportunityDetailPage() {
                         <p className="text-sm font-medium">{c.name}</p>
                         <p className="text-xs text-muted-foreground">{c.title} · {c.role}</p>
                       </div>
-                      <StatusBadge label={c.influenceLevel} variant={c.influenceLevel === 'High' ? 'green' : c.influenceLevel === 'Medium' ? 'amber' : 'default'} />
+                      <StatusBadge label={c.influenceLevel} variant={c.influenceLevel === 'High' ? 'success' : c.influenceLevel === 'Medium' ? 'warning' : 'default'} />
                     </div>
                     <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{c.email}</span>
@@ -231,7 +231,7 @@ export default function OpportunityDetailPage() {
                         <p className="text-xs text-muted-foreground">{t.owner} · Due {t.dueDate}</p>
                       </div>
                     </div>
-                    <StatusBadge label={t.priority} variant={t.priority === 'High' ? 'red' : t.priority === 'Medium' ? 'amber' : 'default'} />
+                    <StatusBadge label={t.priority} variant={t.priority === 'High' ? 'destructive' : t.priority === 'Medium' ? 'warning' : 'default'} />
                   </div>
                 ))}
               </div>
