@@ -12,7 +12,7 @@ import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import OpportunityDetailPage from "./pages/OpportunityDetailPage";
-import PipelinePage from "./pages/PipelinePage";
+
 import TasksPage from "./pages/TasksPage";
 import QuotesPage from "./pages/QuotesPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
@@ -48,7 +48,7 @@ const App = () => (
                   <Route path="/projects/:id" element={<ProjectDetailPage />} />
                   <Route path="/opportunities" element={<OpportunitiesPage />} />
                   <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
-                  <Route path="/pipeline" element={<PipelinePage />} />
+                  
                   <Route path="/tasks" element={<TasksPage />} />
                   <Route path="/quotes" element={<QuotesPage />} />
                   <Route path="/quotes/:id" element={<QuoteDetailPage />} />
