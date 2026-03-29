@@ -71,12 +71,12 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
             mfgOrderNumber: 'TBD',
             accountName: opp.accountName,
             manufacturerLine: opp.manufacturerLine,
-            status: 'Entered',
+            status: 'Pending',
             total: opp.value,
             orderDate: new Date().toISOString().slice(0, 10),
             expectedShip: '',
             project: opp.projectName || '',
-            orderStage: 'Pending',
+            orderStage: 'Entered',
             opportunityId: id,
           };
           toast.success(`Order ${orderNum} auto-created from "${opp.name}"`);

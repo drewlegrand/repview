@@ -6,9 +6,9 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOrderStatusVariant, getOrderStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus, LayoutGrid, List } from 'lucide-react';
-import type { Order, OrderStage } from '@/data/demo-data';
+import type { Order, OrderStatus } from '@/data/demo-data';
 
-const orderStages: OrderStage[] = ['Pending', 'Booked', 'Shipped'];
+const orderStatuses: OrderStatus[] = ['Pending', 'Booked', 'Shipped'];
 
 const fmt = (n: number) => '$' + n.toLocaleString();
 

@@ -195,7 +195,7 @@ export default function ProjectDetailPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-semibold">{fmt(o.total)}</span>
-                      <StatusBadge label={o.status} variant={o.status === 'Delivered' || o.status === 'Complete' ? 'success' : o.status === 'Shipped' ? 'info' : 'default'} />
+                      <StatusBadge label={o.status} variant={getOrderStatusVariant(o.status)} />
                     </div>
                   </div>
                 ))}

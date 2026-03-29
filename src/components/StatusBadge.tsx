@@ -36,8 +36,8 @@ export function getOppStageVariant(stage: string): BadgeVariant {
   }
 }
 
-export function getOrderStageVariant(stage: string): BadgeVariant {
-  switch (stage) {
+export function getOrderStatusVariant(status: string): BadgeVariant {
+  switch (status) {
     case 'Pending': return 'warning';
     case 'Booked': return 'info';
     case 'Shipped': return 'success';
@@ -58,8 +58,8 @@ export function getQuoteStatusVariant(status: string): BadgeVariant {
   }
 }
 
-export function getOrderStatusVariant(status: string): BadgeVariant {
-  switch (status) {
+export function getOrderStageVariant(stage: string): BadgeVariant {
+  switch (stage) {
     case 'Entered': return 'muted';
     case 'Acknowledged': return 'info';
     case 'In Production': return 'default';
