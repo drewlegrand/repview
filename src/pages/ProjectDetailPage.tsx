@@ -21,6 +21,7 @@ export default function ProjectDetailPage() {
   const project = projects.find(p => p.id === id);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(project ? { ...project } : null);
+  const [newOppOpen, setNewOppOpen] = useState(false);
 
   if (!project || !form) {
     return (
