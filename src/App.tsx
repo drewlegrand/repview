@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import AccountsPage from "./pages/AccountsPage";
 import ContactsPage from "./pages/ContactsPage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import OpportunityDetailPage from "./pages/OpportunityDetailPage";
 import QuotesPage from "./pages/QuotesPage";
@@ -34,6 +35,7 @@ const App = () => (
                 <Route path="/accounts" element={<AccountsPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/:id" element={<ProjectDetailPage />} />
                 <Route path="/opportunities" element={<OpportunitiesPage />} />
                 <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
                 <Route path="/quotes" element={<QuotesPage />} />

@@ -3,6 +3,7 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getProjectStatusVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'name', label: 'Project', render: (p: typeof projects[0]) => <span className="font-medium text-primary">{p.name}</span> },
@@ -18,6 +19,7 @@ const columns = [
 ];
 
 export default function ProjectsPage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="page-header">
@@ -27,7 +29,7 @@ export default function ProjectsPage() {
         </div>
         <Button><Plus className="h-4 w-4 mr-1.5" />New Project</Button>
       </div>
-      <DataTable data={projects} columns={columns} searchPlaceholder="Search projects..." />
+      <DataTable data={projects} columns={columns} searchPlaceholder="Search projects..." onRowClick={(p) => navigate(`/projects/${p.id}`)} />
     </div>
   );
 }
