@@ -3,6 +3,7 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOrderStatusVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const fmt = (n: number) => '$' + n.toLocaleString();
 
@@ -19,6 +20,7 @@ const columns = [
 ];
 
 export default function OrdersPage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="page-header">
@@ -28,7 +30,7 @@ export default function OrdersPage() {
         </div>
         <Button><Plus className="h-4 w-4 mr-1.5" />New Order</Button>
       </div>
-      <DataTable data={orders} columns={columns} searchPlaceholder="Search orders..." />
+      <DataTable data={orders} columns={columns} searchPlaceholder="Search orders..." onRowClick={(o) => navigate(`/orders/${o.id}`)} />
     </div>
   );
 }

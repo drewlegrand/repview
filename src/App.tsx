@@ -12,7 +12,11 @@ import ProjectDetailPage from "./pages/ProjectDetailPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import OpportunityDetailPage from "./pages/OpportunityDetailPage";
 import QuotesPage from "./pages/QuotesPage";
+import QuoteDetailPage from "./pages/QuoteDetailPage";
 import OrdersPage from "./pages/OrdersPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import AccountDetailPage from "./pages/AccountDetailPage";
+import ContactDetailPage from "./pages/ContactDetailPage";
 import ReportsPage from "./pages/ReportsPage";
 import SyncCenterPage from "./pages/SyncCenterPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
@@ -33,13 +37,17 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/accounts" element={<AccountsPage />} />
+                <Route path="/accounts/:id" element={<AccountDetailPage />} />
                 <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/contacts/:id" element={<ContactDetailPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/projects/:id" element={<ProjectDetailPage />} />
                 <Route path="/opportunities" element={<OpportunitiesPage />} />
                 <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
                 <Route path="/quotes" element={<QuotesPage />} />
+                <Route path="/quotes/:id" element={<QuoteDetailPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/orders/:id" element={<OrderDetailPage />} />
                 <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/sync" element={<SyncCenterPage />} />
                 <Route path="/ai" element={<AIAssistantPage />} />
