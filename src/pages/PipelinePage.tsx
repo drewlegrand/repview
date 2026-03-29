@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
-import { useAppStore } from '@/stores/app-store';
+import { useAppStore } from '@/stores/app-store.tsx';
 import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { OpportunityEditDialog } from '@/components/OpportunityEditDialog';
 import type { Opportunity, OppStage } from '@/data/demo-data';

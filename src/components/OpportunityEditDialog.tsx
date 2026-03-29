@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
-import { useAppStore } from '@/stores/app-store';
+import { useAppStore } from '@/stores/app-store.tsx';
 import type { Opportunity, OppStage } from '@/data/demo-data';
 import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { toast } from 'sonner';
