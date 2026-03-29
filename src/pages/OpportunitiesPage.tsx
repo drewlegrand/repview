@@ -24,6 +24,7 @@ const columns = [
 
 export default function OpportunitiesPage() {
   const [view, setView] = useState<'table' | 'board'>('table');
+  const navigate = useNavigate();
   const openOpps = opportunities.filter(o => !['Lost', 'Closed/Installed', 'Deferred'].includes(o.stage));
 
   return (
