@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { orders, accounts, projects } from '@/data/demo-data';
-import { StatusBadge, getOrderStatusVariant } from '@/components/StatusBadge';
+import { StatusBadge, getOrderStatusVariant, getOrderStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
