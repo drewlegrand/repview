@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
-  Package, BarChart3, RefreshCw, Sparkles, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, Menu, Columns3, CheckSquare,
+  Package, BarChart3, RefreshCw, Settings, ChevronLeft,
+  ChevronRight, Search, Bell, Command,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
