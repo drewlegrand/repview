@@ -80,7 +80,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-card">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-card border border-inherit">
           {navItems.map(item => {
             const active = location.pathname === item.path ||
               (item.path !== '/' && location.pathname.startsWith(item.path));
