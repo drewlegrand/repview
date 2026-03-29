@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target, CloudIcon } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target, CloudIcon, Plus } from 'lucide-react';
 import OneDriveFileBrowser from '@/components/OneDriveFileBrowser';
+import NewOpportunityDialog from '@/components/NewOpportunityDialog';
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
@@ -20,6 +21,7 @@ export default function ProjectDetailPage() {
   const project = projects.find(p => p.id === id);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(project ? { ...project } : null);
+  const [newOppOpen, setNewOppOpen] = useState(false);
 
   if (!project || !form) {
     return (
@@ -157,6 +159,11 @@ export default function ProjectDetailPage() {
 
             <TabsContent value="opportunities" className="mt-4">
               <div className="space-y-3">
+                <div className="flex justify-end">
+                  <Button variant="outline" size="sm" onClick={() => setNewOppOpen(true)}>
+                    <Plus className="h-3.5 w-3.5 mr-1" />New Opportunity
+                  </Button>
+                </div>
                 {relatedOpps.length === 0 && <p className="text-sm text-muted-foreground py-6 text-center">No opportunities linked to this project.</p>}
                 {relatedOpps.map(o => (
                   <div
@@ -220,6 +227,8 @@ export default function ProjectDetailPage() {
           </Tabs>
         </div>
       </div>
+
+      <NewOpportunityDialog open={newOppOpen} onOpenChange={setNewOppOpen} defaultProjectName={project.name} />
     </div>
   );
 }

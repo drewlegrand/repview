@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NewOpportunityDialog from '@/components/NewOpportunityDialog';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
 
@@ -24,6 +25,7 @@ const columns = [
 
 export default function OpportunitiesPage() {
   const [view, setView] = useState<'table' | 'board'>('table');
+  const [newOppOpen, setNewOppOpen] = useState(false);
   const navigate = useNavigate();
   const openOpps = opportunities.filter(o => !['Lost', 'Closed/Installed', 'Deferred'].includes(o.stage));
 
@@ -43,7 +45,7 @@ export default function OpportunitiesPage() {
               <LayoutGrid className="h-4 w-4" />
             </button>
           </div>
-          <Button><Plus className="h-4 w-4 mr-1.5" />New Opportunity</Button>
+          <Button onClick={() => setNewOppOpen(true)}><Plus className="h-4 w-4 mr-1.5" />New Opportunity</Button>
         </div>
       </div>
 
@@ -82,6 +84,8 @@ export default function OpportunitiesPage() {
           })}
         </div>
       )}
+
+      <NewOpportunityDialog open={newOppOpen} onOpenChange={setNewOppOpen} />
     </div>
   );
 }
