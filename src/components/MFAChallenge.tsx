@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Loader2, ShieldCheck } from 'lucide-react';
 
 const DEVICE_REMEMBER_KEY = 'repview-mfa-device';
-const DEVICE_REMEMBER_DAYS = 30;
+const DEVICE_REMEMBER_HOURS = 12;
 
 export function generateDeviceId(): string {
   const nav = window.navigator;
@@ -37,7 +37,7 @@ export function isDeviceRemembered(userId: string): boolean {
 
 export function rememberDevice(userId: string) {
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + DEVICE_REMEMBER_DAYS);
+  expiresAt.setTime(expiresAt.getTime() + DEVICE_REMEMBER_HOURS * 60 * 60 * 1000);
   localStorage.setItem(
     DEVICE_REMEMBER_KEY,
     JSON.stringify({ userId, deviceId: generateDeviceId(), expiresAt: expiresAt.toISOString() })
@@ -125,7 +125,7 @@ export function MFAChallenge({ factorId, onSuccess, onCancel }: MFAChallengeProp
               htmlFor="remember-device"
               className="text-sm text-muted cursor-pointer select-none"
             >
-              Remember this device for 30 days
+              Remember this device for 12 hours
             </label>
           </div>
 
