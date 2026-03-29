@@ -57,6 +57,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o)));
   }, []);
 
+  const moveOrderStage = useCallback((id: string, newStage: OrderStage) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, orderStage: newStage } : o)));
+  }, []);
+
   const updateOpportunity = useCallback((id: string, updates: Partial<Opportunity>) => {
     setOpportunities((prev) => {
       const updated = prev.map((o) => (o.id === id ? { ...o, ...updates } : o));
