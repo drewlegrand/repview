@@ -29,7 +29,7 @@ export default function ProjectsPage() {
         </div>
         <Button><Plus className="h-4 w-4 mr-1.5" />New Project</Button>
       </div>
-      <DataTable data={projects} columns={columns} searchPlaceholder="Search projects..." />
+      <DataTable data={projects} columns={columns} searchPlaceholder="Search projects..." onRowClick={(p) => navigate(`/projects/${p.id}`)} />
     </div>
   );
 }
