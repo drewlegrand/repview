@@ -72,7 +72,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         collapsed ? "w-16" : "w-60"
       )}>
         {/* Logo */}
-        <div className="items-center gap-3 px-4 h-14 border-b bg-card border flex flex-row border-inherit">
+        <div className="items-center gap-3 px-4 h-14 border-b border-sidebar-border flex flex-row bg-sidebar">
           <div className="h-8 w-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
             <Building2 className="h-4 w-4 text-sidebar-primary-foreground" />
           </div>
@@ -85,7 +85,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-card border border-inherit">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 bg-sidebar border-sidebar-border">
           {navItems.map(item => {
             const active = location.pathname === item.path ||
               (item.path !== '/' && location.pathname.startsWith(item.path));
@@ -108,10 +108,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* Collapse toggle */}
-        <div className="p-2 border-t border-card bg-card">
+        <div className="p-2 border-t border-sidebar-border bg-sidebar">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="nav-item nav-item-inactive w-full justify-center border-inherit bg-card"
+            className="nav-item nav-item-inactive w-full justify-center bg-sidebar"
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
