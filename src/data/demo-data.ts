@@ -4,7 +4,7 @@ export type OppStage = 'Prospect' | 'Specification' | 'Specified' | 'Bid' | 'Awa
 export type OrderStatus = 'Pending' | 'Booked' | 'Shipped';
 export type ForecastStatus = 'Open' | 'Closed Won' | 'Closed Lost';
 export type QuoteStatus = 'Draft' | 'Internal Review' | 'Submitted' | 'Revised' | 'Accepted' | 'Rejected' | 'Expired';
-export type OrderStage = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Delivered' | 'Complete' | 'Hold' | 'Cancelled';
+export type OrderStage = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Complete' | 'Hold' | 'Cancelled';
 export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Construction' | 'Complete' | 'On Hold';
 
 export interface ManufacturerLine {
