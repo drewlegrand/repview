@@ -49,8 +49,8 @@ export default function OrderDetailPage() {
   );
 
   // Simple status timeline
-  const statusOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete'];
-  const currentIndex = statusOrder.indexOf(order.status);
+  const stageOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete'];
+  const currentIndex = stageOrder.indexOf(order.orderStage);
 
   return (
     <div className="space-y-6 animate-fade-in">
