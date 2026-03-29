@@ -75,7 +75,7 @@ export default function OpportunitiesPage() {
     return (
       <Droppable droppableId={stage} key={stage}>
         {(provided, snapshot) => (
-          <div ref={provided.innerRef} {...provided.droppableProps} className="flex-shrink-0 w-64">
+          <div ref={provided.innerRef} {...provided.droppableProps} className={fillWidth ? "flex-1 min-w-[200px]" : "flex-shrink-0 w-64"}>
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
                 {isOrderStage && <Package className="h-3 w-3 text-muted-foreground" />}
