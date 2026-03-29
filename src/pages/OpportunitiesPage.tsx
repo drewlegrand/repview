@@ -48,7 +48,7 @@ export default function OpportunitiesPage() {
       </div>
 
       {view === 'table' ? (
-        <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." />
+        <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <div className="flex gap-3 overflow-x-auto pb-4">
           {stages.map(stage => {
