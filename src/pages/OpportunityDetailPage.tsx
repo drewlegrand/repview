@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
 
-const allStages = ['Lead', 'Spec Influence', 'Budget Pricing', 'Quoted', 'Bid Submitted', 'Negotiation', 'Awarded', 'Lost', 'Deferred', 'Closed/Installed'];
+const allStages = ['Prospect', 'Specification', 'Specified', 'Bid', 'Awarded'];
 
 export default function OpportunityDetailPage() {
   const { id } = useParams();
