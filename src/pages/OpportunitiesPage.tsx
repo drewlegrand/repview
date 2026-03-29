@@ -149,17 +149,17 @@ export default function OpportunitiesPage() {
         <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex overflow-x-auto pb-4">
-            {/* Opportunity Stages */}
-            <div className="flex gap-3">
-              {allOppStages.map(stage => renderKanbanColumn(stage, false))}
+          <div className="flex w-full pb-4 gap-0">
+            {/* Opportunity Stages - fills available space */}
+            <div className="flex gap-3 flex-1 min-w-0">
+              {allOppStages.map(stage => renderKanbanColumn(stage, false, true))}
             </div>
 
-            {/* Order Stages - Horizontally collapsible */}
-            <div className="flex items-start shrink-0">
+            {/* Order Stages toggle + columns, pinned right */}
+            <div className="flex items-start shrink-0 ml-3">
               <button
                 onClick={() => setShowOrderStages(!showOrderStages)}
-                className="flex flex-col items-center gap-1 px-2 py-3 ml-1 mr-1 rounded-lg border bg-card hover:bg-muted transition-colors self-stretch"
+                className="flex flex-col items-center gap-1 px-2 py-3 rounded-lg border bg-card hover:bg-muted transition-colors self-stretch"
                 title={showOrderStages ? 'Collapse order stages' : 'Expand order stages'}
               >
                 {showOrderStages ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground rotate-180" />}
@@ -168,8 +168,8 @@ export default function OpportunitiesPage() {
                 </span>
               </button>
               {showOrderStages && (
-                <div className="flex gap-3 border-l pl-3">
-                  {orderStages.map(stage => renderKanbanColumn(stage, true))}
+                <div className="flex gap-3 border-l pl-3 ml-2">
+                  {orderStages.map(stage => renderKanbanColumn(stage, true, false))}
                 </div>
               )}
             </div>
