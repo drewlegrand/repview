@@ -124,8 +124,8 @@ export function MFAChallenge({ factorId, onSuccess, onCancel }: MFAChallengeProp
             <label
               htmlFor="remember-device"
               className="text-sm text-muted cursor-pointer select-none"
-            >
-              Remember this device
+              >
+              Remember this device 
             </label>
           </div>
 
