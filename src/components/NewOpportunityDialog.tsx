@@ -20,7 +20,7 @@ export default function NewOpportunityDialog({ open, onOpenChange, defaultProjec
   const [form, setForm] = useState({
     name: '',
     accountName: '',
-    stage: 'Lead',
+    stage: 'Prospect',
     value: '',
     probability: '15',
     closeDate: '',
