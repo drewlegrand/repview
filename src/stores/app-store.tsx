@@ -16,7 +16,8 @@ interface AppState {
   moveOrderStage: (id: string, newStage: OrderStage) => void;
 }
 
-const AppStoreContext = createContext<AppState | null>(null);
+const AppStoreContext = ((globalThis as any).__APP_STORE_CONTEXT__ as ReturnType<typeof createContext<AppState | null>>) ?? createContext<AppState | null>(null);
+(globalThis as any).__APP_STORE_CONTEXT__ = AppStoreContext;
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([...demoOpps]);
