@@ -12,7 +12,7 @@ import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import OpportunityDetailPage from "./pages/OpportunityDetailPage";
-import PipelinePage from "./pages/PipelinePage";
+
 import TasksPage from "./pages/TasksPage";
 import QuotesPage from "./pages/QuotesPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
