@@ -227,6 +227,8 @@ export default function ProjectDetailPage() {
           </Tabs>
         </div>
       </div>
+
+      <NewOpportunityDialog open={newOppOpen} onOpenChange={setNewOppOpen} defaultProjectName={project.name} />
     </div>
   );
 }
