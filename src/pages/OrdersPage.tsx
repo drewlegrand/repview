@@ -40,12 +40,12 @@ export default function OrdersPage() {
     const stageValue = stageOrders.reduce((s, o) => s + o.total, 0);
 
     return (
-      <Droppable droppableId={stage} key={stage}>
+      <Droppable droppableId={status} key={status}>
         {(provided, snapshot) => (
           <div ref={provided.innerRef} {...provided.droppableProps} className="min-w-0">
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
-                <StatusBadge label={stage} variant={getOrderStageVariant(stage)} />
+                <StatusBadge label={status} variant={getOrderStatusVariant(status)} />
                 <span className="text-xs text-muted-foreground font-medium">{stageOrders.length}</span>
               </div>
               <span className="text-xs font-semibold text-muted-foreground">{fmt(stageValue)}</span>
