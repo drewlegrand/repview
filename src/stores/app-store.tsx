@@ -29,6 +29,7 @@ const fallbackState: AppState = {
   addOrder: () => undefined,
   updateOrder: () => undefined,
   moveOrderStatus: () => undefined,
+  moveOrderStage: () => undefined,
 };
 
 type AppStoreGlobal = typeof globalThis & { __APP_STORE_CONTEXT__?: Context<AppState | null> };
