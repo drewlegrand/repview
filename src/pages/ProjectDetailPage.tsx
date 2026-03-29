@@ -213,6 +213,10 @@ export default function ProjectDetailPage() {
                 ))}
               </div>
             </TabsContent>
+
+            <TabsContent value="files" className="mt-4">
+              <OneDriveFileBrowser projectName={project.name} />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
