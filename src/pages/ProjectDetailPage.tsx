@@ -134,7 +134,17 @@ export default function ProjectDetailPage() {
               <DetailField icon={Calendar} label="Bid Date" value={form.bidDate} editKey="bidDate" type="date" />
               <DetailField icon={User} label="Owner" value={form.owner} editKey="owner" />
               <DetailField icon={HardHat} label="Architect" value={form.architect} editKey="architect" />
-              <DetailField icon={HardHat} label="General Contractor" value={form.gc} editKey="gc" />
+              {form.contractors.map((c, i) => (
+                <DetailField
+                  key={i}
+                  icon={HardHat}
+                  label={`Contractor${c.isPrimary ? ' (Primary)' : ''}`}
+                  value={c.name}
+                />
+              ))}
+              {form.contractors.length === 0 && (
+                <DetailField icon={HardHat} label="Contractor" value="—" />
+              )}
             </div>
           </div>
 
