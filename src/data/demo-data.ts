@@ -24,7 +24,7 @@ export interface Contact {
 export interface Opportunity {
   id: string; name: string; accountName: string; stage: OppStage; value: number; probability: number;
   closeDate: string; manufacturerLine: string; productCategory: string; territory: string; owner: string;
-  projectName?: string; bidDate?: string; source: string; orderStage?: OrderStage;
+  projectName?: string; bidDate?: string; source: string; forecastStatus: ForecastStatus;
 }
 
 export interface Project {
