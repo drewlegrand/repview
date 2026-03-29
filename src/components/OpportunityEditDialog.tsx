@@ -7,12 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store.tsx';
-import type { Opportunity, OppStage, OrderStage } from '@/data/demo-data';
-import { StatusBadge, getOppStageVariant, getOrderStageVariant } from '@/components/StatusBadge';
+import type { Opportunity, OppStage, ForecastStatus } from '@/data/demo-data';
+import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { toast } from 'sonner';
 
 const defaultStages: OppStage[] = ['Prospect', 'Specification', 'Specified', 'Bid', 'Awarded'];
-const orderStages: OrderStage[] = ['Pending', 'Booked', 'Shipped'];
+const forecastStatuses: ForecastStatus[] = ['Open', 'Closed Won', 'Closed Lost'];
 
 interface Props {
   opportunity: Opportunity | null;
@@ -44,10 +44,6 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
     if (showCustomStage && customStage.trim()) {
       updates.stage = customStage.trim() as OppStage;
     }
-    // Clear order stage if not Awarded
-    if (updates.stage !== 'Awarded') {
-      updates.orderStage = undefined;
-    }
     updateOpportunity(opportunity.id, updates);
     toast.success('Opportunity updated');
     onOpenChange(false);
@@ -69,7 +65,7 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
   };
 
   const currentStage = form.stage || opportunity.stage;
-  const isAwarded = currentStage === 'Awarded';
+  const currentForecast = form.forecastStatus || opportunity.forecastStatus;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -82,9 +78,7 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <StatusBadge label={currentStage} variant={getOppStageVariant(currentStage)} />
-              {isAwarded && form.orderStage && (
-                <StatusBadge label={`Order: ${form.orderStage}`} variant={getOrderStageVariant(form.orderStage)} />
-              )}
+              <StatusBadge label={currentForecast} variant={currentForecast === 'Closed Won' ? 'success' : currentForecast === 'Closed Lost' ? 'destructive' : 'muted'} />
             </div>
             <span className="text-lg font-bold text-primary">{fmt(form.value ?? opportunity.value)}</span>
           </div>
@@ -132,19 +126,15 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
               </div>
             </div>
 
-            {/* Order Stage - only when Awarded */}
-            {isAwarded && (
-              <div>
-                <Label className="text-xs text-muted-foreground">Order Stage (Post-Sales)</Label>
-                <Select value={form.orderStage || '__none__'} onValueChange={(v) => setForm({ ...form, orderStage: v === '__none__' ? undefined : v as OrderStage })}>
-                  <SelectTrigger><SelectValue placeholder="Select order stage" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">— None —</SelectItem>
-                    {orderStages.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div>
+              <Label className="text-xs text-muted-foreground">Forecast Status</Label>
+              <Select value={form.forecastStatus || 'Open'} onValueChange={(v) => setForm({ ...form, forecastStatus: v as ForecastStatus })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {forecastStatuses.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>

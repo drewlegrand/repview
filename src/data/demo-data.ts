@@ -2,6 +2,7 @@
 export type AccountType = 'Architect' | 'Consultant' | 'Building Owner' | 'General Contractor' | 'Roofing Contractor' | 'Waterproofing Contractor' | 'Glazing Contractor' | 'Distributor' | 'Manufacturer' | 'Developer' | 'Facilities Owner';
 export type OppStage = 'Prospect' | 'Specification' | 'Specified' | 'Bid' | 'Awarded' | string;
 export type OrderStage = 'Pending' | 'Booked' | 'Shipped';
+export type ForecastStatus = 'Open' | 'Closed Won' | 'Closed Lost';
 export type QuoteStatus = 'Draft' | 'Internal Review' | 'Submitted' | 'Revised' | 'Accepted' | 'Rejected' | 'Expired';
 export type OrderStatus = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Delivered' | 'Complete' | 'Hold' | 'Cancelled';
 export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Construction' | 'Complete' | 'On Hold';
@@ -23,7 +24,7 @@ export interface Contact {
 export interface Opportunity {
   id: string; name: string; accountName: string; stage: OppStage; value: number; probability: number;
   closeDate: string; manufacturerLine: string; productCategory: string; territory: string; owner: string;
-  projectName?: string; bidDate?: string; source: string; orderStage?: OrderStage;
+  projectName?: string; bidDate?: string; source: string; forecastStatus: ForecastStatus;
 }
 
 export interface Project {
@@ -40,6 +41,7 @@ export interface Quote {
 export interface Order {
   id: string; orderNumber: string; mfgOrderNumber: string; accountName: string; manufacturerLine: string;
   status: OrderStatus; total: number; orderDate: string; expectedShip: string; project: string;
+  orderStage: OrderStage; opportunityId?: string;
 }
 
 export interface Activity {
@@ -91,18 +93,18 @@ export const contacts: Contact[] = [
 ];
 
 export const opportunities: Opportunity[] = [
-  { id: 'o1', name: 'City Center Tower - Roof Replacement', accountName: 'Summit Roofing Contractors', stage: 'Bid', value: 485000, probability: 60, closeDate: '2026-05-15', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'City Center Tower', bidDate: '2026-04-10', source: 'Existing Relationship' },
-  { id: 'o2', name: 'Harbor Medical Campus - Skylights', accountName: 'Henderson Architecture Group', stage: 'Specification', value: 320000, probability: 40, closeDate: '2026-07-20', manufacturerLine: 'VELUX Skylights', productCategory: 'Skylights', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Harbor Medical Campus', source: 'Architect Spec' },
-  { id: 'o3', name: 'Patriot Plaza Ph2 - Waterproofing', accountName: 'Patriot Development Corp', stage: 'Bid', value: 275000, probability: 70, closeDate: '2026-04-30', manufacturerLine: 'Tremco Roofing', productCategory: 'Waterproofing', territory: 'Mid-Atlantic', owner: 'Sarah Chen', projectName: 'Patriot Plaza Phase 2', bidDate: '2026-03-28', source: 'Developer Direct' },
-  { id: 'o4', name: 'Greenfield Science Hall - Insulation', accountName: 'Greenfield University', stage: 'Specification', value: 142000, probability: 30, closeDate: '2026-08-15', manufacturerLine: 'Hunter Panels', productCategory: 'Insulation', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Greenfield Science Hall', source: 'Owner Direct' },
-  { id: 'o5', name: 'Metro Office Complex - Full Envelope', accountName: 'Metro General Contractors', stage: 'Specified', value: 890000, probability: 75, closeDate: '2026-04-20', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Metro Office Complex', source: 'GC Bid Request' },
-  { id: 'o6', name: 'Capital Center Reroof', accountName: 'Capital Facilities Group', stage: 'Awarded', value: 356000, probability: 95, closeDate: '2026-04-05', manufacturerLine: 'Soprema', productCategory: 'Roofing', territory: 'Mid-Atlantic', owner: 'James Wright', source: 'Existing Relationship', orderStage: 'Pending' },
-  { id: 'o7', name: 'Beacon Distribution Center - Cladding', accountName: 'Beacon Building Products', stage: 'Prospect', value: 210000, probability: 15, closeDate: '2026-09-30', manufacturerLine: 'Kingspan Insulation', productCategory: 'Cladding', territory: 'Northeast', owner: 'Sarah Chen', source: 'Cold Call' },
-  { id: 'o8', name: 'Atlantic WP - Cover Board Supply', accountName: 'Atlantic Waterproofing Inc', stage: 'Bid', value: 95000, probability: 55, closeDate: '2026-05-01', manufacturerLine: 'Georgia-Pacific DensDeck', productCategory: 'Cover Boards', territory: 'Mid-Atlantic', owner: 'James Wright', source: 'Contractor Direct' },
-  { id: 'o9', name: 'Skyline HQ Curtainwall Skylights', accountName: 'Skyline Glass & Glazing', stage: 'Specification', value: 420000, probability: 35, closeDate: '2026-08-01', manufacturerLine: 'VELUX Skylights', productCategory: 'Skylights', territory: 'Mid-Atlantic', owner: 'Sarah Chen', source: 'Architect Referral' },
-  { id: 'o10', name: 'Harbor Medical - Roofing', accountName: 'Summit Roofing Contractors', stage: 'Awarded', value: 615000, probability: 100, closeDate: '2026-01-15', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Harbor Medical Campus', source: 'Existing Relationship', orderStage: 'Shipped' },
-  { id: 'o11', name: 'Providence Library Reroof', accountName: 'Northstar Consulting Engineers', stage: 'Prospect', value: 188000, probability: 10, closeDate: '2026-02-28', manufacturerLine: 'Tremco Roofing', productCategory: 'Roofing', territory: 'Northeast', owner: 'James Wright', source: 'Consultant Spec' },
-  { id: 'o12', name: 'Patriot Plaza Ph1 - Insulation', accountName: 'Patriot Development Corp', stage: 'Awarded', value: 198000, probability: 100, closeDate: '2025-11-20', manufacturerLine: 'Kingspan Insulation', productCategory: 'Insulation', territory: 'Mid-Atlantic', owner: 'Sarah Chen', source: 'Developer Direct', orderStage: 'Booked' },
+  { id: 'o1', name: 'City Center Tower - Roof Replacement', accountName: 'Summit Roofing Contractors', stage: 'Bid', value: 485000, probability: 60, closeDate: '2026-05-15', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'City Center Tower', bidDate: '2026-04-10', source: 'Existing Relationship', forecastStatus: 'Open' },
+  { id: 'o2', name: 'Harbor Medical Campus - Skylights', accountName: 'Henderson Architecture Group', stage: 'Specification', value: 320000, probability: 40, closeDate: '2026-07-20', manufacturerLine: 'VELUX Skylights', productCategory: 'Skylights', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Harbor Medical Campus', source: 'Architect Spec', forecastStatus: 'Open' },
+  { id: 'o3', name: 'Patriot Plaza Ph2 - Waterproofing', accountName: 'Patriot Development Corp', stage: 'Bid', value: 275000, probability: 70, closeDate: '2026-04-30', manufacturerLine: 'Tremco Roofing', productCategory: 'Waterproofing', territory: 'Mid-Atlantic', owner: 'Sarah Chen', projectName: 'Patriot Plaza Phase 2', bidDate: '2026-03-28', source: 'Developer Direct', forecastStatus: 'Open' },
+  { id: 'o4', name: 'Greenfield Science Hall - Insulation', accountName: 'Greenfield University', stage: 'Specification', value: 142000, probability: 30, closeDate: '2026-08-15', manufacturerLine: 'Hunter Panels', productCategory: 'Insulation', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Greenfield Science Hall', source: 'Owner Direct', forecastStatus: 'Open' },
+  { id: 'o5', name: 'Metro Office Complex - Full Envelope', accountName: 'Metro General Contractors', stage: 'Specified', value: 890000, probability: 75, closeDate: '2026-04-20', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Metro Office Complex', source: 'GC Bid Request', forecastStatus: 'Open' },
+  { id: 'o6', name: 'Capital Center Reroof', accountName: 'Capital Facilities Group', stage: 'Awarded', value: 356000, probability: 95, closeDate: '2026-04-05', manufacturerLine: 'Soprema', productCategory: 'Roofing', territory: 'Mid-Atlantic', owner: 'James Wright', source: 'Existing Relationship', forecastStatus: 'Closed Won' },
+  { id: 'o7', name: 'Beacon Distribution Center - Cladding', accountName: 'Beacon Building Products', stage: 'Prospect', value: 210000, probability: 15, closeDate: '2026-09-30', manufacturerLine: 'Kingspan Insulation', productCategory: 'Cladding', territory: 'Northeast', owner: 'Sarah Chen', source: 'Cold Call', forecastStatus: 'Open' },
+  { id: 'o8', name: 'Atlantic WP - Cover Board Supply', accountName: 'Atlantic Waterproofing Inc', stage: 'Bid', value: 95000, probability: 55, closeDate: '2026-05-01', manufacturerLine: 'Georgia-Pacific DensDeck', productCategory: 'Cover Boards', territory: 'Mid-Atlantic', owner: 'James Wright', source: 'Contractor Direct', forecastStatus: 'Open' },
+  { id: 'o9', name: 'Skyline HQ Curtainwall Skylights', accountName: 'Skyline Glass & Glazing', stage: 'Specification', value: 420000, probability: 35, closeDate: '2026-08-01', manufacturerLine: 'VELUX Skylights', productCategory: 'Skylights', territory: 'Mid-Atlantic', owner: 'Sarah Chen', source: 'Architect Referral', forecastStatus: 'Open' },
+  { id: 'o10', name: 'Harbor Medical - Roofing', accountName: 'Summit Roofing Contractors', stage: 'Awarded', value: 615000, probability: 100, closeDate: '2026-01-15', manufacturerLine: 'Carlisle SynTec', productCategory: 'Roofing', territory: 'Northeast', owner: 'Mike Torres', projectName: 'Harbor Medical Campus', source: 'Existing Relationship', forecastStatus: 'Closed Won' },
+  { id: 'o11', name: 'Providence Library Reroof', accountName: 'Northstar Consulting Engineers', stage: 'Prospect', value: 188000, probability: 10, closeDate: '2026-02-28', manufacturerLine: 'Tremco Roofing', productCategory: 'Roofing', territory: 'Northeast', owner: 'James Wright', source: 'Consultant Spec', forecastStatus: 'Open' },
+  { id: 'o12', name: 'Patriot Plaza Ph1 - Insulation', accountName: 'Patriot Development Corp', stage: 'Awarded', value: 198000, probability: 100, closeDate: '2025-11-20', manufacturerLine: 'Kingspan Insulation', productCategory: 'Insulation', territory: 'Mid-Atlantic', owner: 'Sarah Chen', source: 'Developer Direct', forecastStatus: 'Closed Won' },
 ];
 
 export const projects: Project[] = [
@@ -124,11 +126,11 @@ export const quotes: Quote[] = [
 ];
 
 export const orders: Order[] = [
-  { id: 'ord1', orderNumber: 'ORD-2026-0018', mfgOrderNumber: 'CST-882341', accountName: 'Summit Roofing Contractors', manufacturerLine: 'Carlisle SynTec', status: 'In Production', total: 615000, orderDate: '2026-01-20', expectedShip: '2026-04-10', project: 'Harbor Medical Campus' },
-  { id: 'ord2', orderNumber: 'ORD-2026-0019', mfgOrderNumber: 'SOP-443211', accountName: 'Capital Facilities Group', manufacturerLine: 'Soprema', status: 'Entered', total: 356000, orderDate: '2026-03-28', expectedShip: '2026-05-15', project: 'Capital Center' },
-  { id: 'ord3', orderNumber: 'ORD-2026-0017', mfgOrderNumber: 'TRM-991287', accountName: 'Patriot Development Corp', manufacturerLine: 'Tremco Roofing', status: 'Acknowledged', total: 275000, orderDate: '2026-03-25', expectedShip: '2026-05-01', project: 'Patriot Plaza Phase 2' },
-  { id: 'ord4', orderNumber: 'ORD-2025-0145', mfgOrderNumber: 'KSP-228834', accountName: 'Patriot Development Corp', manufacturerLine: 'Kingspan Insulation', status: 'Delivered', total: 198000, orderDate: '2025-09-15', expectedShip: '2025-10-30', project: 'Patriot Plaza Phase 1' },
-  { id: 'ord5', orderNumber: 'ORD-2025-0152', mfgOrderNumber: 'CST-871290', accountName: 'Metro General Contractors', manufacturerLine: 'Carlisle SynTec', status: 'Shipped', total: 445000, orderDate: '2025-12-10', expectedShip: '2026-03-25', project: 'Metro Office Complex' },
+  { id: 'ord1', orderNumber: 'ORD-2026-0018', mfgOrderNumber: 'CST-882341', accountName: 'Summit Roofing Contractors', manufacturerLine: 'Carlisle SynTec', status: 'In Production', total: 615000, orderDate: '2026-01-20', expectedShip: '2026-04-10', project: 'Harbor Medical Campus', orderStage: 'Booked', opportunityId: 'o10' },
+  { id: 'ord2', orderNumber: 'ORD-2026-0019', mfgOrderNumber: 'SOP-443211', accountName: 'Capital Facilities Group', manufacturerLine: 'Soprema', status: 'Entered', total: 356000, orderDate: '2026-03-28', expectedShip: '2026-05-15', project: 'Capital Center', orderStage: 'Pending', opportunityId: 'o6' },
+  { id: 'ord3', orderNumber: 'ORD-2026-0017', mfgOrderNumber: 'TRM-991287', accountName: 'Patriot Development Corp', manufacturerLine: 'Tremco Roofing', status: 'Acknowledged', total: 275000, orderDate: '2026-03-25', expectedShip: '2026-05-01', project: 'Patriot Plaza Phase 2', orderStage: 'Booked' },
+  { id: 'ord4', orderNumber: 'ORD-2025-0145', mfgOrderNumber: 'KSP-228834', accountName: 'Patriot Development Corp', manufacturerLine: 'Kingspan Insulation', status: 'Delivered', total: 198000, orderDate: '2025-09-15', expectedShip: '2025-10-30', project: 'Patriot Plaza Phase 1', orderStage: 'Shipped', opportunityId: 'o12' },
+  { id: 'ord5', orderNumber: 'ORD-2025-0152', mfgOrderNumber: 'CST-871290', accountName: 'Metro General Contractors', manufacturerLine: 'Carlisle SynTec', status: 'Shipped', total: 445000, orderDate: '2025-12-10', expectedShip: '2026-03-25', project: 'Metro Office Complex', orderStage: 'Shipped' },
 ];
 
 export const activities: Activity[] = [
