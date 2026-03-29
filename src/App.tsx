@@ -6,7 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import { AppStoreProvider } from "@/stores/app-store";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { MFAChallenge, isDeviceRemembered } from "@/components/MFAChallenge";
 import AuthPage from "./pages/AuthPage";
+import MFASetupPage from "./pages/MFASetupPage";
 import Dashboard from "./pages/Dashboard";
 import AccountsPage from "./pages/AccountsPage";
 import ContactsPage from "./pages/ContactsPage";
@@ -31,7 +33,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function ProtectedRoutes() {
-  const { user, loading } = useAuth();
+  const { user, loading, mfaRequired, mfaFactorId, mfaEnrollRequired, completeMFA, signOut } = useAuth();
 
   if (loading) {
     return (
@@ -43,6 +45,27 @@ function ProtectedRoutes() {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // User needs to enroll in MFA
+  if (mfaEnrollRequired) {
+    return <MFASetupPage />;
+  }
+
+  // User needs to verify MFA (and device isn't remembered)
+  if (mfaRequired && mfaFactorId) {
+    if (!isDeviceRemembered(user.id)) {
+      return (
+        <MFAChallenge
+          factorId={mfaFactorId}
+          onSuccess={completeMFA}
+          onCancel={signOut}
+        />
+      );
+    } else {
+      // Device is remembered, complete MFA automatically
+      completeMFA();
+    }
   }
 
   return (
