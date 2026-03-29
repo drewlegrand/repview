@@ -37,7 +37,7 @@ export function isDeviceRemembered(userId: string): boolean {
 
 export function rememberDevice(userId: string) {
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + DEVICE_REMEMBER_DAYS);
+  expiresAt.setTime(expiresAt.getTime() + DEVICE_REMEMBER_HOURS * 60 * 60 * 1000);
   localStorage.setItem(
     DEVICE_REMEMBER_KEY,
     JSON.stringify({ userId, deviceId: generateDeviceId(), expiresAt: expiresAt.toISOString() })
