@@ -35,8 +35,8 @@ export default function OrdersPage() {
     moveOrderStatus(result.draggableId, result.destination.droppableId as OrderStatus);
   };
 
-  const renderKanbanColumn = (stage: OrderStage) => {
-    const stageOrders = orders.filter(o => o.orderStage === stage);
+  const renderKanbanColumn = (status: OrderStatus) => {
+    const stageOrders = orders.filter(o => o.status === status);
     const stageValue = stageOrders.reduce((s, o) => s + o.total, 0);
 
     return (
