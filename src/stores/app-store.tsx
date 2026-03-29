@@ -104,7 +104,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStage }}>
+    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStatus }}>
       {children}
     </AppStoreContext.Provider>
   );
