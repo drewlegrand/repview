@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode, type Context } from 'react';
-import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage } from '@/data/demo-data';
+import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage, type OrderStatus } from '@/data/demo-data';
 import { toast } from 'sonner';
 
 interface AppState {
