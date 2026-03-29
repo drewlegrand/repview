@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode, type Context } from 'react';
 import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage } from '@/data/demo-data';
 import { toast } from 'sonner';
 
@@ -16,8 +16,10 @@ interface AppState {
   moveOrderStage: (id: string, newStage: OrderStage) => void;
 }
 
-const AppStoreContext = ((globalThis as any).__APP_STORE_CONTEXT__ as any) || createContext<AppState | null>(null);
-(globalThis as any).__APP_STORE_CONTEXT__ = AppStoreContext;
+type AppStoreGlobal = typeof globalThis & { __APP_STORE_CONTEXT__?: Context<AppState | null> };
+const storeGlobal = globalThis as AppStoreGlobal;
+const AppStoreContext = storeGlobal.__APP_STORE_CONTEXT__ ?? createContext<AppState | null>(null);
+storeGlobal.__APP_STORE_CONTEXT__ = AppStoreContext;
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([...demoOpps]);
