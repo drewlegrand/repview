@@ -45,7 +45,7 @@ export default function OpportunitiesPage() {
               <LayoutGrid className="h-4 w-4" />
             </button>
           </div>
-          <Button><Plus className="h-4 w-4 mr-1.5" />New Opportunity</Button>
+          <Button onClick={() => setNewOppOpen(true)}><Plus className="h-4 w-4 mr-1.5" />New Opportunity</Button>
         </div>
       </div>
 
