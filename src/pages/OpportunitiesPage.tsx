@@ -2,7 +2,7 @@ import { opportunities } from '@/data/demo-data';
 import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutGrid, List } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NewOpportunityDialog from '@/components/NewOpportunityDialog';
