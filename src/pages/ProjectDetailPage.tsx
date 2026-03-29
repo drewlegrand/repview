@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, Building2, MapPin, Calendar, Ruler, User, Briefcase, HardHat, Target, CloudIcon } from 'lucide-react';
+import OneDriveFileBrowser from '@/components/OneDriveFileBrowser';
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
