@@ -12,18 +12,16 @@ import { AICommandBar } from '@/components/AICommandBar';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'Accounts', icon: Building2, path: '/accounts' },
-  { label: 'Contacts', icon: Users, path: '/contacts' },
-  { label: 'Projects', icon: FolderKanban, path: '/projects' },
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
-  
-  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Quotes', icon: FileText, path: '/quotes' },
   { label: 'Orders', icon: Package, path: '/orders' },
+  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
+  { label: 'Projects', icon: FolderKanban, path: '/projects' },
+  { label: 'Accounts', icon: Building2, path: '/accounts' },
+  { label: 'Contacts', icon: Users, path: '/contacts' },
   { label: 'Reports', icon: BarChart3, path: '/reports' },
-  { label: 'Sync Center', icon: RefreshCw, path: '/sync' },
-  { label: 'AI Assistant', icon: Sparkles, path: '/ai' },
   { label: 'Admin', icon: Settings, path: '/admin' },
+  { label: 'Sync Center', icon: RefreshCw, path: '/sync' },
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
