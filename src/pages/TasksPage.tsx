@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAppStore } from '@/stores/app-store.tsx';
+import { useAppStore } from '@/stores/app-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

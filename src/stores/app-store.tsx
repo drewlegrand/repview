@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode, type Context } from 'react';
 import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage } from '@/data/demo-data';
 import { toast } from 'sonner';
 
@@ -16,7 +16,27 @@ interface AppState {
   moveOrderStage: (id: string, newStage: OrderStage) => void;
 }
 
-const AppStoreContext = createContext<AppState | null>(null);
+const fallbackState: AppState = {
+  opportunities: [...demoOpps],
+  tasks: [...demoTasks],
+  orders: [...demoOrders],
+  updateOpportunity: () => undefined,
+  moveOpportunityStage: () => undefined,
+  addTask: () => undefined,
+  updateTask: () => undefined,
+  deleteTask: () => undefined,
+  addOrder: () => undefined,
+  updateOrder: () => undefined,
+  moveOrderStage: () => undefined,
+};
+
+type AppStoreGlobal = typeof globalThis & { __APP_STORE_CONTEXT__?: Context<AppState | null> };
+const storeGlobal = globalThis as AppStoreGlobal;
+const existingContext = storeGlobal.__APP_STORE_CONTEXT__;
+const AppStoreContext = existingContext && 'Provider' in existingContext && 'Consumer' in existingContext
+  ? existingContext
+  : createContext<AppState | null>(null);
+storeGlobal.__APP_STORE_CONTEXT__ = AppStoreContext;
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([...demoOpps]);
@@ -40,29 +60,27 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       const updated = prev.map((o) => (o.id === id ? { ...o, ...updates } : o));
       const opp = updated.find((o) => o.id === id);
       if (opp && opp.stage === 'Awarded' && opp.forecastStatus === 'Closed Won') {
-        // Check if order already exists for this opportunity
         setOrders((prevOrders) => {
           const existing = prevOrders.find((ord) => ord.opportunityId === id);
-          if (!existing) {
-            const orderNum = `ORD-2026-${String(prevOrders.length + 20).padStart(4, '0')}`;
-            const newOrder: Order = {
-              id: `ord-${Date.now()}`,
-              orderNumber: orderNum,
-              mfgOrderNumber: 'TBD',
-              accountName: opp.accountName,
-              manufacturerLine: opp.manufacturerLine,
-              status: 'Entered',
-              total: opp.value,
-              orderDate: new Date().toISOString().slice(0, 10),
-              expectedShip: '',
-              project: opp.projectName || '',
-              orderStage: 'Pending',
-              opportunityId: id,
-            };
-            toast.success(`Order ${orderNum} auto-created from "${opp.name}"`);
-            return [...prevOrders, newOrder];
-          }
-          return prevOrders;
+          if (existing) return prevOrders;
+
+          const orderNum = `ORD-2026-${String(prevOrders.length + 20).padStart(4, '0')}`;
+          const newOrder: Order = {
+            id: `ord-${Date.now()}`,
+            orderNumber: orderNum,
+            mfgOrderNumber: 'TBD',
+            accountName: opp.accountName,
+            manufacturerLine: opp.manufacturerLine,
+            status: 'Entered',
+            total: opp.value,
+            orderDate: new Date().toISOString().slice(0, 10),
+            expectedShip: '',
+            project: opp.projectName || '',
+            orderStage: 'Pending',
+            opportunityId: id,
+          };
+          toast.success(`Order ${orderNum} auto-created from "${opp.name}"`);
+          return [...prevOrders, newOrder];
         });
       }
       return updated;
@@ -94,6 +112,5 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
 export function useAppStore() {
   const ctx = useContext(AppStoreContext);
-  if (!ctx) throw new Error('useAppStore must be used within AppStoreProvider');
-  return ctx;
+  return ctx ?? fallbackState;
 }

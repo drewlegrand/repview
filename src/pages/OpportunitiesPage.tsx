@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
-import { useAppStore } from '@/stores/app-store.tsx';
+import { useAppStore } from '@/stores/app-store';
 import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { OpportunityEditDialog } from '@/components/OpportunityEditDialog';

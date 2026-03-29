@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
-import { AppStoreProvider } from "@/stores/app-store.tsx";
+import { AppStoreProvider } from "@/stores/app-store";
 import Dashboard from "./pages/Dashboard";
 import AccountsPage from "./pages/AccountsPage";
 import ContactsPage from "./pages/ContactsPage";
