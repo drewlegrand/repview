@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
   Package, BarChart3, RefreshCw, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, CheckSquare,
+  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
