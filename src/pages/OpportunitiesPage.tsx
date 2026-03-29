@@ -64,7 +64,7 @@ export default function OpportunitiesPage() {
     }
   };
 
-  const renderKanbanColumn = (stage: string, isOrderStage: boolean) => {
+  const renderKanbanColumn = (stage: string, isOrderStage: boolean, fillWidth: boolean = false) => {
     const stageOpps = isOrderStage
       ? opportunities.filter(o => o.stage === 'Awarded' && o.orderStage === stage)
       : stage === 'Awarded'
