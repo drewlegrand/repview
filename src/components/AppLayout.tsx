@@ -33,6 +33,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('repview-theme');
