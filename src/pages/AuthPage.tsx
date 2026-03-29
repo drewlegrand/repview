@@ -43,17 +43,17 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-foreground">
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg">
             R
           </div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-primary-foreground">
             {isLogin ? 'Sign in to Repview' : 'Create your account'}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm bg-inherit text-muted">
             {isLogin
               ? 'Enter your credentials to access your dashboard'
               : 'Get started with Repview today'}
@@ -117,7 +117,7 @@ export default function AuthPage() {
         </form>
 
         {/* Toggle */}
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-primary-foreground">
           {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
           <button
             type="button"
