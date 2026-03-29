@@ -150,6 +150,9 @@ export default function ProjectDetailPage() {
               <TabsTrigger value="opportunities">Opportunities ({relatedOpps.length})</TabsTrigger>
               <TabsTrigger value="orders">Orders ({relatedOrders.length})</TabsTrigger>
               <TabsTrigger value="activity">Activity ({relatedActivities.length})</TabsTrigger>
+              <TabsTrigger value="files" className="flex items-center gap-1.5">
+                <CloudIcon className="h-3.5 w-3.5" />Files
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="opportunities" className="mt-4">
