@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   mfaRequired: boolean;
   mfaFactorId: string | null;
+  mfaEnrollRequired: boolean;
   aal: { currentLevel: string; nextLevel: string } | null;
   completeMFA: () => void;
   signOut: () => Promise<void>;
@@ -32,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
   const [mfaEnrollRequired, setMfaEnrollRequired] = useState(false);
-  const [aal, setAal] = useState<AuthenticatorAssuranceLevels | null>(null);
+  const [aal, setAal] = useState<{ currentLevel: string; nextLevel: string } | null>(null);
 
   const checkMFAStatus = async () => {
     const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
