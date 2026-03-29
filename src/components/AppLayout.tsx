@@ -108,10 +108,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* Collapse toggle */}
-        <div className="p-2 border-t border-card bg-card">
+        <div className="p-2 border-t border-sidebar-border bg-sidebar">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="nav-item nav-item-inactive w-full justify-center border-inherit bg-card"
+            className="nav-item nav-item-inactive w-full justify-center bg-sidebar"
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
