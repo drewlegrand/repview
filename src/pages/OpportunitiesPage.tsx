@@ -61,7 +61,7 @@ export default function OpportunitiesPage() {
                 </div>
                 <div className="space-y-2">
                   {stageOpps.map(o => (
-                    <div key={o.id} className="bg-card border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div key={o.id} className="bg-card border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/opportunities/${o.id}`)}>
                       <p className="text-sm font-medium truncate">{o.name}</p>
                       <p className="text-xs text-muted-foreground mt-1">{o.accountName}</p>
                       <div className="flex items-center justify-between mt-2">
