@@ -27,10 +27,15 @@ export interface Opportunity {
   projectName?: string; bidDate?: string; source: string; forecastStatus: ForecastStatus;
 }
 
+export interface Contractor {
+  name: string;
+  isPrimary?: boolean;
+}
+
 export interface Project {
   id: string; name: string; address: string; city: string; state: string; type: string;
   status: ProjectStatus; sqft: number; bidDate: string; owner: string; architect: string;
-  gc: string; oppCount: number;
+  contractors: Contractor[]; oppCount: number;
 }
 
 export interface Quote {
