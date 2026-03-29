@@ -41,6 +41,7 @@ export interface Quote {
 export interface Order {
   id: string; orderNumber: string; mfgOrderNumber: string; accountName: string; manufacturerLine: string;
   status: OrderStatus; total: number; orderDate: string; expectedShip: string; project: string;
+  orderStage: OrderStage; opportunityId?: string;
 }
 
 export interface Activity {
