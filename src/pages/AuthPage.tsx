@@ -8,13 +8,10 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [forgotMode, setForgotMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [forgotMode, setForgotMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +60,54 @@ export default function AuthPage() {
     }
   };
 
+  // Forgot password view
+  if (forgotMode) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-foreground">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg">
+              R
+            </div>
+            <h1 className="text-2xl font-bold text-primary-foreground">Reset your password</h1>
+            <p className="text-sm bg-inherit text-muted">
+              Enter your email and we'll send you a reset link
+            </p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Send Reset Link
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-primary-foreground">
+            <button
+              type="button"
+              onClick={() => setForgotMode(false)}
+              className="text-primary font-medium hover:underline"
+            >
+              Back to Sign In
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-foreground">
       <div className="w-full max-w-md space-y-8">
@@ -110,7 +155,18 @@ export default function AuthPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              {isLogin && (
+                <button
+                  type="button"
+                  onClick={() => setForgotMode(true)}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
             <div className="relative">
               <Input
                 id="password"

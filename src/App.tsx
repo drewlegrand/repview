@@ -25,6 +25,7 @@ import ReportsPage from "./pages/ReportsPage";
 import SyncCenterPage from "./pages/SyncCenterPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
 import AdminPage from "./pages/AdminPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
