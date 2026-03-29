@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'destructive' | 'info' | 'muted';
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'destructive' | 'info' | 'muted';
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-primary/10 text-primary',
