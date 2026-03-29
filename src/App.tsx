@@ -9,6 +9,7 @@ import AccountsPage from "./pages/AccountsPage";
 import ContactsPage from "./pages/ContactsPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
+import OpportunityDetailPage from "./pages/OpportunityDetailPage";
 import QuotesPage from "./pages/QuotesPage";
 import OrdersPage from "./pages/OrdersPage";
 import ReportsPage from "./pages/ReportsPage";
