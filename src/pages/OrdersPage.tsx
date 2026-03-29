@@ -45,7 +45,7 @@ export default function OrdersPage() {
           <div ref={provided.innerRef} {...provided.droppableProps} className="min-w-0">
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
-                <StatusBadge label={status} variant={getOrderStatusVariant(status)} />
+                <StatusBadge label={stage} variant={getOrderStageVariant(stage)} />
                 <span className="text-xs text-muted-foreground font-medium">{stageOrders.length}</span>
               </div>
               <span className="text-xs font-semibold text-muted-foreground">{fmt(stageValue)}</span>
