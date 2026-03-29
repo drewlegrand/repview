@@ -28,15 +28,15 @@ const columns = [
 export default function OrdersPage() {
   const [view, setView] = useState<'list' | 'board'>('board');
   const navigate = useNavigate();
-  const { orders, moveOrderStatus } = useAppStore();
+  const { orders, moveOrderStage } = useAppStore();
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    moveOrderStatus(result.draggableId, result.destination.droppableId as OrderStatus);
+    moveOrderStage(result.draggableId, result.destination.droppableId as OrderStage);
   };
 
-  const renderKanbanColumn = (status: OrderStatus) => {
-    const stageOrders = orders.filter(o => o.status === status);
+  const renderKanbanColumn = (stage: OrderStage) => {
+    const stageOrders = orders.filter(o => o.orderStage === stage);
     const stageValue = stageOrders.reduce((s, o) => s + o.total, 0);
 
     return (
