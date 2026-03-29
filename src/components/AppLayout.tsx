@@ -14,7 +14,7 @@ import { FloatingAIChat } from '@/components/FloatingAIChat';
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
-  { label: 'Quotes', icon: FileText, path: '/quotes' },
+  
   { label: 'Orders', icon: Package, path: '/orders' },
   { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Projects', icon: FolderKanban, path: '/projects' },
