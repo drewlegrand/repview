@@ -84,6 +84,8 @@ export default function OpportunitiesPage() {
           })}
         </div>
       )}
+
+      <NewOpportunityDialog open={newOppOpen} onOpenChange={setNewOppOpen} />
     </div>
   );
 }
