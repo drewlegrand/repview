@@ -4,12 +4,16 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
   Package, BarChart3, RefreshCw, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon,
+  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon, LogOut,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AICommandBar } from '@/components/AICommandBar';
 import { FloatingAIChat } from '@/components/FloatingAIChat';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -29,6 +33,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('repview-theme');
@@ -137,9 +142,25 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-accent text-[9px] font-bold text-accent-foreground flex items-center justify-center">3</span>
             </Button>
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-              MT
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity">
+                  {user?.email?.substring(0, 2).toUpperCase() ?? 'MT'}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {user?.email && (
+                  <>
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">{user.email}</div>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
