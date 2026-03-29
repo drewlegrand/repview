@@ -3,27 +3,26 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
-  Package, BarChart3, RefreshCw, Sparkles, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, Menu, Columns3, CheckSquare,
+  Package, BarChart3, RefreshCw, Settings, ChevronLeft,
+  ChevronRight, Search, Bell, Command, CheckSquare,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AICommandBar } from '@/components/AICommandBar';
+import { FloatingAIChat } from '@/components/FloatingAIChat';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'Accounts', icon: Building2, path: '/accounts' },
-  { label: 'Contacts', icon: Users, path: '/contacts' },
-  { label: 'Projects', icon: FolderKanban, path: '/projects' },
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
-  
-  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Quotes', icon: FileText, path: '/quotes' },
   { label: 'Orders', icon: Package, path: '/orders' },
+  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
+  { label: 'Projects', icon: FolderKanban, path: '/projects' },
+  { label: 'Accounts', icon: Building2, path: '/accounts' },
+  { label: 'Contacts', icon: Users, path: '/contacts' },
   { label: 'Reports', icon: BarChart3, path: '/reports' },
-  { label: 'Sync Center', icon: RefreshCw, path: '/sync' },
-  { label: 'AI Assistant', icon: Sparkles, path: '/ai' },
   { label: 'Admin', icon: Settings, path: '/admin' },
+  { label: 'Sync Center', icon: RefreshCw, path: '/sync' },
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -131,6 +130,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </div>
 
       <AICommandBar open={commandOpen} onOpenChange={setCommandOpen} />
+      <FloatingAIChat />
     </div>
   );
 }
