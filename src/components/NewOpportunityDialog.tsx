@@ -37,7 +37,7 @@ export default function NewOpportunityDialog({ open, onOpenChange, defaultProjec
     // In a real app, this would persist the new opportunity
     onOpenChange(false);
     setForm({
-      name: '', accountName: '', stage: 'Lead', value: '', probability: '15',
+      name: '', accountName: '', stage: 'Prospect', value: '', probability: '15',
       closeDate: '', manufacturerLine: '', productCategory: '', territory: '',
       owner: '', projectName: defaultProjectName || '', bidDate: '', source: '',
     });
