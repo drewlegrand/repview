@@ -4,12 +4,16 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
   Package, BarChart3, RefreshCw, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon,
+  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon, LogOut,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AICommandBar } from '@/components/AICommandBar';
 import { FloatingAIChat } from '@/components/FloatingAIChat';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
