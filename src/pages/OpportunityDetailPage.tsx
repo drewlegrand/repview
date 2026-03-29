@@ -78,6 +78,7 @@ export default function OpportunityDetailPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold">{opp.name}</h1>
               <StatusBadge label={opp.stage} variant={getOppStageVariant(opp.stage)} />
+              <StatusBadge label={opp.forecastStatus} variant={opp.forecastStatus === 'Closed Won' ? 'success' : opp.forecastStatus === 'Closed Lost' ? 'destructive' : 'muted'} />
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">{opp.accountName} · {opp.territory} · {opp.manufacturerLine}</p>
           </div>

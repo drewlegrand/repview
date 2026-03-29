@@ -61,6 +61,7 @@ export default function OrderDetailPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold font-mono">{order.orderNumber}</h1>
               <StatusBadge label={order.status} variant={getOrderStatusVariant(order.status)} />
+              <StatusBadge label={order.orderStage} variant={getOrderStageVariant(order.orderStage)} />
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">{order.accountName} · {order.manufacturerLine} · {order.project}</p>
           </div>
