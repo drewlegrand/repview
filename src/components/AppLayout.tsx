@@ -142,9 +142,25 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-accent text-[9px] font-bold text-accent-foreground flex items-center justify-center">3</span>
             </Button>
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-              MT
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground cursor-pointer hover:opacity-80 transition-opacity">
+                  {user?.email?.substring(0, 2).toUpperCase() ?? 'MT'}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {user?.email && (
+                  <>
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">{user.email}</div>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
