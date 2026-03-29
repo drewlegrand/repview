@@ -129,7 +129,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </kbd>
             </button>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-accent text-[9px] font-bold text-accent-foreground flex items-center justify-center">3</span>
