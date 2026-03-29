@@ -50,7 +50,7 @@ export default function OrderDetailPage() {
   );
 
   // Simple status timeline
-  const stageOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete'];
+  const stageOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Complete'];
   const currentIndex = stageOrder.indexOf(order.orderStage);
 
   return (
