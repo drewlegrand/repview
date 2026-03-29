@@ -26,7 +26,7 @@ const columns = [
 ];
 
 export default function OrdersPage() {
-  const [view, setView] = useState<'list' | 'board'>('list');
+  const [view, setView] = useState<'list' | 'board'>('board');
   const navigate = useNavigate();
   const { orders, moveOrderStatus } = useAppStore();
 
