@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { opportunities, activities, quotes, contacts, tasks } from '@/data/demo-data';
+import { opportunities, activities, quotes, contacts, tasks, projects } from '@/data/demo-data';
 import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
