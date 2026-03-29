@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AICommandBar } from '@/components/AICommandBar';
+import { FloatingAIChat } from '@/components/FloatingAIChat';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
