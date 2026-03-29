@@ -125,7 +125,7 @@ export function MFAChallenge({ factorId, onSuccess, onCancel }: MFAChallengeProp
               htmlFor="remember-device"
               className="text-sm text-muted cursor-pointer select-none"
             >
-              Remember this device for 30 days
+              Remember this device for 12 hours
             </label>
           </div>
 
