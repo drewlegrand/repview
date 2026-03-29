@@ -30,13 +30,22 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
 
-  // Apply dark mode when inside the app
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('repview-theme');
+    return saved ? saved === 'dark' : true;
+  });
+
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('repview-theme', darkMode ? 'dark' : 'light');
     return () => {
       document.documentElement.classList.remove('dark');
     };
-  }, []);
+  }, [darkMode]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
