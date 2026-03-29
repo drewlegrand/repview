@@ -130,6 +130,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </div>
 
       <AICommandBar open={commandOpen} onOpenChange={setCommandOpen} />
+      <FloatingAIChat />
     </div>
   );
 }
