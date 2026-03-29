@@ -5,7 +5,7 @@ export type OrderStatus = 'Pending' | 'Booked' | 'Shipped';
 export type ForecastStatus = 'Open' | 'Closed Won' | 'Closed Lost';
 export type QuoteStatus = 'Draft' | 'Internal Review' | 'Submitted' | 'Revised' | 'Accepted' | 'Rejected' | 'Expired';
 export type OrderStage = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Complete' | 'Hold' | 'Cancelled';
-export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Construction' | 'Complete' | 'On Hold';
+export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Complete';
 
 export interface ManufacturerLine {
   id: string; name: string; categories: string[]; status: 'Active' | 'Inactive'; apiConnected: boolean;
