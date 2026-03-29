@@ -149,27 +149,26 @@ export default function OpportunitiesPage() {
         <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="space-y-4">
+          <div className="flex overflow-x-auto pb-4">
             {/* Opportunity Stages */}
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">Opportunity Stages</h3>
-              <div className="flex gap-3 overflow-x-auto pb-4">
-                {allOppStages.map(stage => renderKanbanColumn(stage, false))}
-              </div>
+            <div className="flex gap-3">
+              {allOppStages.map(stage => renderKanbanColumn(stage, false))}
             </div>
 
-            {/* Order Stages - Collapsible */}
-            <div className="border-t pt-4">
+            {/* Order Stages - Horizontally collapsible */}
+            <div className="flex items-start shrink-0">
               <button
                 onClick={() => setShowOrderStages(!showOrderStages)}
-                className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1 hover:text-foreground transition-colors"
+                className="flex flex-col items-center gap-1 px-2 py-3 ml-1 mr-1 rounded-lg border bg-card hover:bg-muted transition-colors self-stretch"
+                title={showOrderStages ? 'Collapse order stages' : 'Expand order stages'}
               >
-                {showOrderStages ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                <Package className="h-3.5 w-3.5" />
-                Order Stages (Post-Sales)
+                {showOrderStages ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground rotate-180" />}
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider [writing-mode:vertical-lr] rotate-180">
+                  Order Stages
+                </span>
               </button>
               {showOrderStages && (
-                <div className="flex gap-3 overflow-x-auto pb-4">
+                <div className="flex gap-3 border-l pl-3">
                   {orderStages.map(stage => renderKanbanColumn(stage, true))}
                 </div>
               )}
