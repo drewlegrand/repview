@@ -16,8 +16,8 @@ const navItems = [
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
   
   { label: 'Orders', icon: Package, path: '/orders' },
-  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Projects', icon: FolderKanban, path: '/projects' },
+  { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Accounts', icon: Building2, path: '/accounts' },
   { label: 'Contacts', icon: Users, path: '/contacts' },
   { label: 'Reports', icon: BarChart3, path: '/reports' },
