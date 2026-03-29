@@ -139,7 +139,33 @@ export default function OpportunityDetailPage() {
               <DetailField icon={User} label="Owner" value={form.owner} editKey="owner" />
               <DetailField icon={MapPin} label="Territory" value={form.territory} />
               <DetailField icon={Briefcase} label="Source" value={form.source} editKey="source" />
-              {form.projectName && <DetailField icon={Building2} label="Project" value={form.projectName} />}
+              <div className="flex items-start gap-3 py-2.5">
+                <Building2 className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Project</p>
+                  {editing ? (
+                    <Select value={form.projectName || '__none__'} onValueChange={v => setForm({ ...form, projectName: v === '__none__' ? '' : v })}>
+                      <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Select project" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__">— None —</SelectItem>
+                        {projects.map(p => <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p
+                      className={`text-sm font-medium truncate ${form.projectName ? 'text-primary cursor-pointer hover:underline' : ''}`}
+                      onClick={() => {
+                        if (form.projectName) {
+                          const proj = projects.find(p => p.name === form.projectName);
+                          if (proj) navigate(`/projects/${proj.id}`);
+                        }
+                      }}
+                    >
+                      {form.projectName || '—'}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
