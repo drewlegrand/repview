@@ -9,8 +9,6 @@ import NewOpportunityDialog from '@/components/NewOpportunityDialog';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
 
-const stages = ['Lead', 'Spec Influence', 'Budget Pricing', 'Quoted', 'Bid Submitted', 'Negotiation', 'Awarded'];
-
 const columns = [
   { key: 'name', label: 'Opportunity', render: (o: typeof opportunities[0]) => <span className="font-medium text-primary">{o.name}</span> },
   { key: 'accountName', label: 'Account' },
