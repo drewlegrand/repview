@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Loader2, ShieldCheck } from 'lucide-react';
 
 const DEVICE_REMEMBER_KEY = 'repview-mfa-device';
-const DEVICE_REMEMBER_DAYS = 30;
+const DEVICE_REMEMBER_HOURS = 12;
 
 export function generateDeviceId(): string {
   const nav = window.navigator;
