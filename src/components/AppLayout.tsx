@@ -56,7 +56,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           {!collapsed && (
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-sidebar-accent-foreground truncate">Envelope</p>
-              <p className="text-[10px] text-sidebar-foreground truncate">Rep Agency Platform</p>
+              <p className="text-[10px] text-sidebar-foreground truncate">Conner-Legrand, Inc.</p>
             </div>
           )}
         </div>
