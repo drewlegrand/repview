@@ -159,11 +159,6 @@ export default function ProjectDetailPage() {
 
             <TabsContent value="opportunities" className="mt-4">
               <div className="space-y-3">
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm" onClick={() => setNewOppOpen(true)}>
-                    <Plus className="h-3.5 w-3.5 mr-1" />New Opportunity
-                  </Button>
-                </div>
                 {relatedOpps.length === 0 && <p className="text-sm text-muted-foreground py-6 text-center">No opportunities linked to this project.</p>}
                 {relatedOpps.map(o => (
                   <div
