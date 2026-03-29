@@ -36,8 +36,9 @@ export default function ProjectDetailPage() {
 
   const relatedOpps = opportunities.filter(o => o.projectName === project.name);
   const relatedOrders = orders.filter(o => o.project === project.name);
+  const contractorNames = project.contractors.map(c => c.name);
   const relatedActivities = activities.filter(a =>
-    a.accountName === project.architect || a.accountName === project.gc
+    a.accountName === project.architect || contractorNames.includes(a.accountName)
   ).slice(0, 5);
 
   const handleSave = () => setEditing(false);
