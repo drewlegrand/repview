@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { projects, manufacturerLines } from '@/data/demo-data';
 
-const allStages = ['Lead', 'Spec Influence', 'Budget Pricing', 'Quoted', 'Bid Submitted', 'Negotiation', 'Awarded'];
+const allStages = ['Prospect', 'Specification', 'Specified', 'Bid', 'Awarded'];
 const territories = ['Northeast', 'Mid-Atlantic', 'Southeast', 'Midwest', 'West'];
 const owners = ['Mike Torres', 'Sarah Chen', 'James Wright'];
 
