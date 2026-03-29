@@ -3,6 +3,7 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getProjectStatusVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'name', label: 'Project', render: (p: typeof projects[0]) => <span className="font-medium text-primary">{p.name}</span> },
