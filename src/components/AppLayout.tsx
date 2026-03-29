@@ -72,7 +72,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         collapsed ? "w-16" : "w-60"
       )}>
         {/* Logo */}
-        <div className="items-center gap-3 px-4 h-14 border-b bg-card border flex flex-row border-inherit">
+        <div className="items-center gap-3 px-4 h-14 border-b border-sidebar-border flex flex-row bg-sidebar">
           <div className="h-8 w-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
             <Building2 className="h-4 w-4 text-sidebar-primary-foreground" />
           </div>
