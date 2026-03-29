@@ -4,6 +4,7 @@ import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
 
@@ -23,6 +24,7 @@ const columns = [
 
 export default function OpportunitiesPage() {
   const [view, setView] = useState<'table' | 'board'>('table');
+  const navigate = useNavigate();
   const openOpps = opportunities.filter(o => !['Lost', 'Closed/Installed', 'Deferred'].includes(o.stage));
 
   return (
@@ -46,7 +48,7 @@ export default function OpportunitiesPage() {
       </div>
 
       {view === 'table' ? (
-        <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." />
+        <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <div className="flex gap-3 overflow-x-auto pb-4">
           {stages.map(stage => {
@@ -59,7 +61,7 @@ export default function OpportunitiesPage() {
                 </div>
                 <div className="space-y-2">
                   {stageOpps.map(o => (
-                    <div key={o.id} className="bg-card border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div key={o.id} className="bg-card border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/opportunities/${o.id}`)}>
                       <p className="text-sm font-medium truncate">{o.name}</p>
                       <p className="text-xs text-muted-foreground mt-1">{o.accountName}</p>
                       <div className="flex items-center justify-between mt-2">
