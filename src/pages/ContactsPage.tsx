@@ -3,6 +3,7 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'name', label: 'Name', render: (c: typeof contacts[0]) => <span className="font-medium text-primary">{c.name}</span> },
@@ -18,6 +19,7 @@ const columns = [
 ];
 
 export default function ContactsPage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="page-header">
@@ -27,7 +29,7 @@ export default function ContactsPage() {
         </div>
         <Button><Plus className="h-4 w-4 mr-1.5" />New Contact</Button>
       </div>
-      <DataTable data={contacts} columns={columns} searchPlaceholder="Search contacts..." />
+      <DataTable data={contacts} columns={columns} searchPlaceholder="Search contacts..." onRowClick={(c) => navigate(`/contacts/${c.id}`)} />
     </div>
   );
 }
