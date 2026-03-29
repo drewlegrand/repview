@@ -27,16 +27,20 @@ export function StatusBadge({ label, variant = 'default', className }: StatusBad
 
 export function getOppStageVariant(stage: string): BadgeVariant {
   switch (stage) {
-    case 'Lead': return 'muted';
-    case 'Spec Influence': return 'info';
-    case 'Budget Pricing': return 'info';
-    case 'Quoted': return 'default';
-    case 'Bid Submitted': return 'warning';
-    case 'Negotiation': return 'warning';
+    case 'Prospect': return 'muted';
+    case 'Specification': return 'info';
+    case 'Specified': return 'default';
+    case 'Bid': return 'warning';
     case 'Awarded': return 'success';
-    case 'Closed/Installed': return 'success';
-    case 'Lost': return 'destructive';
-    case 'Deferred': return 'muted';
+    default: return 'default';
+  }
+}
+
+export function getOrderStageVariant(stage: string): BadgeVariant {
+  switch (stage) {
+    case 'Pending': return 'warning';
+    case 'Booked': return 'info';
+    case 'Shipped': return 'success';
     default: return 'default';
   }
 }

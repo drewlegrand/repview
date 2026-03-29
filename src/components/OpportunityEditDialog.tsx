@@ -7,11 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store.tsx';
-import type { Opportunity, OppStage } from '@/data/demo-data';
-import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
+import type { Opportunity, OppStage, OrderStage } from '@/data/demo-data';
+import { StatusBadge, getOppStageVariant, getOrderStageVariant } from '@/components/StatusBadge';
 import { toast } from 'sonner';
 
-const allStages: OppStage[] = ['Lead', 'Spec Influence', 'Budget Pricing', 'Quoted', 'Bid Submitted', 'Negotiation', 'Awarded', 'Lost', 'Deferred', 'Closed/Installed'];
+const defaultStages: OppStage[] = ['Prospect', 'Specification', 'Specified', 'Bid', 'Awarded'];
+const orderStages: OrderStage[] = ['Pending', 'Booked', 'Shipped'];
 
 interface Props {
   opportunity: Opportunity | null;
@@ -23,9 +24,15 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
   const { updateOpportunity, addTask } = useAppStore();
   const [form, setForm] = useState<Partial<Opportunity>>({});
   const [taskTitle, setTaskTitle] = useState('');
+  const [customStage, setCustomStage] = useState('');
+  const [showCustomStage, setShowCustomStage] = useState(false);
 
   useEffect(() => {
-    if (opportunity) setForm({ ...opportunity });
+    if (opportunity) {
+      setForm({ ...opportunity });
+      setShowCustomStage(false);
+      setCustomStage('');
+    }
   }, [opportunity]);
 
   if (!opportunity) return null;
@@ -33,7 +40,15 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
   const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
 
   const handleSave = () => {
-    updateOpportunity(opportunity.id, form);
+    const updates = { ...form };
+    if (showCustomStage && customStage.trim()) {
+      updates.stage = customStage.trim() as OppStage;
+    }
+    // Clear order stage if not Awarded
+    if (updates.stage !== 'Awarded') {
+      updates.orderStage = undefined;
+    }
+    updateOpportunity(opportunity.id, updates);
     toast.success('Opportunity updated');
     onOpenChange(false);
   };
@@ -53,6 +68,9 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
     setTaskTitle('');
   };
 
+  const currentStage = form.stage || opportunity.stage;
+  const isAwarded = currentStage === 'Awarded';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
@@ -62,7 +80,12 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <StatusBadge label={form.stage || opportunity.stage} variant={getOppStageVariant(form.stage || opportunity.stage)} />
+            <div className="flex items-center gap-2">
+              <StatusBadge label={currentStage} variant={getOppStageVariant(currentStage)} />
+              {isAwarded && form.orderStage && (
+                <StatusBadge label={`Order: ${form.orderStage}`} variant={getOrderStageVariant(form.orderStage)} />
+              )}
+            </div>
             <span className="text-lg font-bold text-primary">{fmt(form.value ?? opportunity.value)}</span>
           </div>
 
@@ -74,18 +97,55 @@ export function OpportunityEditDialog({ opportunity, open, onOpenChange }: Props
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground">Stage</Label>
-                <Select value={form.stage} onValueChange={(v) => setForm({ ...form, stage: v as OppStage })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {allStages.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                {showCustomStage ? (
+                  <div className="flex gap-1.5 mt-0.5">
+                    <Input
+                      value={customStage}
+                      onChange={(e) => setCustomStage(e.target.value)}
+                      placeholder="Custom stage name"
+                      className="h-9 text-sm"
+                    />
+                    <Button variant="ghost" size="sm" onClick={() => { setShowCustomStage(false); setCustomStage(''); }}>✕</Button>
+                  </div>
+                ) : (
+                  <Select
+                    value={form.stage}
+                    onValueChange={(v) => {
+                      if (v === '__custom__') {
+                        setShowCustomStage(true);
+                      } else {
+                        setForm({ ...form, stage: v as OppStage });
+                      }
+                    }}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {defaultStages.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      <SelectItem value="__custom__">+ Custom Stage…</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Value ($)</Label>
                 <Input type="number" value={form.value ?? ''} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} />
               </div>
             </div>
+
+            {/* Order Stage - only when Awarded */}
+            {isAwarded && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Order Stage (Post-Sales)</Label>
+                <Select value={form.orderStage || '__none__'} onValueChange={(v) => setForm({ ...form, orderStage: v === '__none__' ? undefined : v as OrderStage })}>
+                  <SelectTrigger><SelectValue placeholder="Select order stage" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">— None —</SelectItem>
+                    {orderStages.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground">Probability (%)</Label>
