@@ -64,7 +64,6 @@ export function getOrderStageVariant(stage: string): BadgeVariant {
     case 'Acknowledged': return 'info';
     case 'In Production': return 'default';
     case 'Shipped': return 'warning';
-    case 'Delivered': return 'success';
     case 'Complete': return 'success';
     case 'Hold': return 'destructive';
     case 'Cancelled': return 'destructive';
