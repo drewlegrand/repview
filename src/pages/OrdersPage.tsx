@@ -112,9 +112,9 @@ export default function OrdersPage() {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div
             className="grid w-full gap-3 pb-4"
-            style={{ gridTemplateColumns: `repeat(${orderStatuses.length}, minmax(0, 1fr))` }}
+            style={{ gridTemplateColumns: `repeat(${orderStages.length}, minmax(0, 1fr))` }}
           >
-            {orderStatuses.map(status => renderKanbanColumn(status))}
+            {orderStages.map(stage => renderKanbanColumn(stage))}
           </div>
         </DragDropContext>
       )}
