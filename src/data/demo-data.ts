@@ -1,6 +1,7 @@
 // ─── Types ──────────────────────────────────────────────────────────────
 export type AccountType = 'Architect' | 'Consultant' | 'Building Owner' | 'General Contractor' | 'Roofing Contractor' | 'Waterproofing Contractor' | 'Glazing Contractor' | 'Distributor' | 'Manufacturer' | 'Developer' | 'Facilities Owner';
-export type OppStage = 'Lead' | 'Spec Influence' | 'Budget Pricing' | 'Quoted' | 'Bid Submitted' | 'Negotiation' | 'Awarded' | 'Lost' | 'Deferred' | 'Closed/Installed';
+export type OppStage = 'Prospect' | 'Specification' | 'Specified' | 'Bid' | 'Awarded' | string;
+export type OrderStage = 'Pending' | 'Booked' | 'Shipped';
 export type QuoteStatus = 'Draft' | 'Internal Review' | 'Submitted' | 'Revised' | 'Accepted' | 'Rejected' | 'Expired';
 export type OrderStatus = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Delivered' | 'Complete' | 'Hold' | 'Cancelled';
 export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Construction' | 'Complete' | 'On Hold';
