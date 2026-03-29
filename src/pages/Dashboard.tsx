@@ -18,7 +18,7 @@ export default function Dashboard() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Welcome back, Mike Torres · Northeast Territory</p>
+          <p className="page-subtitle">​</p>
         </div>
       </div>
 
