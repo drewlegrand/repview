@@ -8,8 +8,7 @@ interface AuthContextType {
   loading: boolean;
   mfaRequired: boolean;
   mfaFactorId: string | null;
-  mfaEnrollRequired: boolean;
-  aal: AuthenticatorAssuranceLevels | null;
+  aal: { currentLevel: string; nextLevel: string } | null;
   completeMFA: () => void;
   signOut: () => Promise<void>;
 }
