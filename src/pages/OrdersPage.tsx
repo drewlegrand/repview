@@ -28,11 +28,11 @@ const columns = [
 export default function OrdersPage() {
   const [view, setView] = useState<'list' | 'board'>('list');
   const navigate = useNavigate();
-  const { orders, moveOrderStage } = useAppStore();
+  const { orders, moveOrderStatus } = useAppStore();
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    moveOrderStage(result.draggableId, result.destination.droppableId as OrderStage);
+    moveOrderStatus(result.draggableId, result.destination.droppableId as OrderStatus);
   };
 
   const renderKanbanColumn = (stage: OrderStage) => {
