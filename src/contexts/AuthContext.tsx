@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (error) return;
     
-    setAal(data);
+    setAal({ currentLevel: data.currentLevel, nextLevel: data.nextLevel });
     
     if (data.nextLevel === 'aal2' && data.currentLevel === 'aal1') {
       // User has MFA enrolled but hasn't verified this session
