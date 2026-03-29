@@ -10,7 +10,8 @@ import { ArrowLeft, Edit2, Save, X, Building2, Calendar, DollarSign, Briefcase, 
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + n.toLocaleString();
-const allStatuses = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete', 'Hold', 'Cancelled'];
+const allStatuses = ['Pending', 'Booked', 'Shipped'];
+const allStages = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete', 'Hold', 'Cancelled'];
 
 export default function OrderDetailPage() {
   const { id } = useParams();
