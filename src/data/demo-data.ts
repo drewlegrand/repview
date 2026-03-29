@@ -27,10 +27,15 @@ export interface Opportunity {
   projectName?: string; bidDate?: string; source: string; forecastStatus: ForecastStatus;
 }
 
+export interface Contractor {
+  name: string;
+  isPrimary?: boolean;
+}
+
 export interface Project {
   id: string; name: string; address: string; city: string; state: string; type: string;
   status: ProjectStatus; sqft: number; bidDate: string; owner: string; architect: string;
-  gc: string; oppCount: number;
+  contractors: Contractor[]; oppCount: number;
 }
 
 export interface Quote {
@@ -108,12 +113,12 @@ export const opportunities: Opportunity[] = [
 ];
 
 export const projects: Project[] = [
-  { id: 'p1', name: 'City Center Tower', address: '200 Main Street', city: 'Hartford', state: 'CT', type: 'Commercial Office', status: 'Bidding', sqft: 85000, bidDate: '2026-04-10', owner: 'City Center LLC', architect: 'Henderson Architecture Group', gc: 'Metro General Contractors', oppCount: 2 },
-  { id: 'p2', name: 'Harbor Medical Campus', address: '45 Harbor Blvd', city: 'Boston', state: 'MA', type: 'Healthcare', status: 'Design', sqft: 120000, bidDate: '2026-06-15', owner: 'Harbor Health Systems', architect: 'Henderson Architecture Group', gc: 'TBD', oppCount: 3 },
-  { id: 'p3', name: 'Patriot Plaza Phase 2', address: '1600 Market St', city: 'Philadelphia', state: 'PA', type: 'Mixed Use', status: 'Bidding', sqft: 65000, bidDate: '2026-03-28', owner: 'Patriot Development Corp', architect: 'KPF Associates', gc: 'Turner Construction', oppCount: 2 },
-  { id: 'p4', name: 'Greenfield Science Hall', address: '100 University Drive', city: 'Worcester', state: 'MA', type: 'Education', status: 'Pre-Design', sqft: 42000, bidDate: '2026-07-01', owner: 'Greenfield University', architect: 'Payette', gc: 'TBD', oppCount: 1 },
-  { id: 'p5', name: 'Metro Office Complex', address: '500 Broad St', city: 'Newark', state: 'NJ', type: 'Commercial Office', status: 'Complete', sqft: 175000, bidDate: '2026-02-15', owner: 'Metro Properties LLC', architect: 'Gensler', gc: 'Metro General Contractors', oppCount: 1 },
-  { id: 'p6', name: 'Capital Center', address: '800 Capitol Ave', city: 'Richmond', state: 'VA', type: 'Government', status: 'Bidding', sqft: 55000, bidDate: '2026-01-10', owner: 'State of Virginia', architect: 'Clark Nexsen', gc: 'Whiting-Turner', oppCount: 1 },
+  { id: 'p1', name: 'City Center Tower', address: '200 Main Street', city: 'Hartford', state: 'CT', type: 'Commercial Office', status: 'Bidding', sqft: 85000, bidDate: '2026-04-10', owner: 'City Center LLC', architect: 'Henderson Architecture Group', contractors: [{ name: 'Metro General Contractors', isPrimary: true }, { name: 'Atlantic Waterproofing Inc' }], oppCount: 2 },
+  { id: 'p2', name: 'Harbor Medical Campus', address: '45 Harbor Blvd', city: 'Boston', state: 'MA', type: 'Healthcare', status: 'Design', sqft: 120000, bidDate: '2026-06-15', owner: 'Harbor Health Systems', architect: 'Henderson Architecture Group', contractors: [], oppCount: 3 },
+  { id: 'p3', name: 'Patriot Plaza Phase 2', address: '1600 Market St', city: 'Philadelphia', state: 'PA', type: 'Mixed Use', status: 'Bidding', sqft: 65000, bidDate: '2026-03-28', owner: 'Patriot Development Corp', architect: 'KPF Associates', contractors: [{ name: 'Turner Construction', isPrimary: true }], oppCount: 2 },
+  { id: 'p4', name: 'Greenfield Science Hall', address: '100 University Drive', city: 'Worcester', state: 'MA', type: 'Education', status: 'Pre-Design', sqft: 42000, bidDate: '2026-07-01', owner: 'Greenfield University', architect: 'Payette', contractors: [], oppCount: 1 },
+  { id: 'p5', name: 'Metro Office Complex', address: '500 Broad St', city: 'Newark', state: 'NJ', type: 'Commercial Office', status: 'Complete', sqft: 175000, bidDate: '2026-02-15', owner: 'Metro Properties LLC', architect: 'Gensler', contractors: [{ name: 'Metro General Contractors', isPrimary: true }, { name: 'Whiting-Turner' }], oppCount: 1 },
+  { id: 'p6', name: 'Capital Center', address: '800 Capitol Ave', city: 'Richmond', state: 'VA', type: 'Government', status: 'Bidding', sqft: 55000, bidDate: '2026-01-10', owner: 'State of Virginia', architect: 'Clark Nexsen', contractors: [{ name: 'Whiting-Turner', isPrimary: true }], oppCount: 1 },
 ];
 
 export const quotes: Quote[] = [
