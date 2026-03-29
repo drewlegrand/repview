@@ -6,9 +6,9 @@ import { DataTable } from '@/components/DataTable';
 import { StatusBadge, getOrderStatusVariant, getOrderStageVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Plus, LayoutGrid, List } from 'lucide-react';
-import type { Order, OrderStage } from '@/data/demo-data';
+import type { Order, OrderStatus } from '@/data/demo-data';
 
-const orderStages: OrderStage[] = ['Pending', 'Booked', 'Shipped'];
+const orderStatuses: OrderStatus[] = ['Pending', 'Booked', 'Shipped'];
 
 const fmt = (n: number) => '$' + n.toLocaleString();
 
@@ -28,24 +28,24 @@ const columns = [
 export default function OrdersPage() {
   const [view, setView] = useState<'list' | 'board'>('list');
   const navigate = useNavigate();
-  const { orders, moveOrderStage } = useAppStore();
+  const { orders, moveOrderStatus } = useAppStore();
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    moveOrderStage(result.draggableId, result.destination.droppableId as OrderStage);
+    moveOrderStatus(result.draggableId, result.destination.droppableId as OrderStatus);
   };
 
-  const renderKanbanColumn = (stage: OrderStage) => {
-    const stageOrders = orders.filter(o => o.orderStage === stage);
+  const renderKanbanColumn = (status: OrderStatus) => {
+    const stageOrders = orders.filter(o => o.status === status);
     const stageValue = stageOrders.reduce((s, o) => s + o.total, 0);
 
     return (
-      <Droppable droppableId={stage} key={stage}>
+      <Droppable droppableId={status} key={status}>
         {(provided, snapshot) => (
           <div ref={provided.innerRef} {...provided.droppableProps} className="min-w-0">
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
-                <StatusBadge label={stage} variant={getOrderStageVariant(stage)} />
+                <StatusBadge label={status} variant={getOrderStatusVariant(status)} />
                 <span className="text-xs text-muted-foreground font-medium">{stageOrders.length}</span>
               </div>
               <span className="text-xs font-semibold text-muted-foreground">{fmt(stageValue)}</span>
@@ -112,9 +112,9 @@ export default function OrdersPage() {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div
             className="grid w-full gap-3 pb-4"
-            style={{ gridTemplateColumns: `repeat(${orderStages.length}, minmax(0, 1fr))` }}
+            style={{ gridTemplateColumns: `repeat(${orderStatuses.length}, minmax(0, 1fr))` }}
           >
-            {orderStages.map(stage => renderKanbanColumn(stage))}
+            {orderStatuses.map(status => renderKanbanColumn(status))}
           </div>
         </DragDropContext>
       )}

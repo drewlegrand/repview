@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { projects, opportunities, quotes, orders, activities } from '@/data/demo-data';
-import { StatusBadge, getProjectStatusVariant, getOppStageVariant } from '@/components/StatusBadge';
+import { StatusBadge, getProjectStatusVariant, getOppStageVariant, getOrderStatusVariant } from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -195,7 +195,7 @@ export default function ProjectDetailPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-semibold">{fmt(o.total)}</span>
-                      <StatusBadge label={o.status} variant={o.status === 'Delivered' || o.status === 'Complete' ? 'success' : o.status === 'Shipped' ? 'info' : 'default'} />
+                      <StatusBadge label={o.status} variant={getOrderStatusVariant(o.status)} />
                     </div>
                   </div>
                 ))}

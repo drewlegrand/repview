@@ -10,7 +10,8 @@ import { ArrowLeft, Edit2, Save, X, Building2, Calendar, DollarSign, Briefcase, 
 import { useState } from 'react';
 
 const fmt = (n: number) => '$' + n.toLocaleString();
-const allStatuses = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete', 'Hold', 'Cancelled'];
+const allStatuses = ['Pending', 'Booked', 'Shipped'];
+const allStages = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete', 'Hold', 'Cancelled'];
 
 export default function OrderDetailPage() {
   const { id } = useParams();
@@ -49,8 +50,8 @@ export default function OrderDetailPage() {
   );
 
   // Simple status timeline
-  const statusOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete'];
-  const currentIndex = statusOrder.indexOf(order.status);
+  const stageOrder = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete'];
+  const currentIndex = stageOrder.indexOf(order.orderStage);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -97,13 +98,13 @@ export default function OrderDetailPage() {
         <div className="bg-card border rounded-lg p-4">
           <h3 className="text-sm font-semibold mb-4">Order Progress</h3>
           <div className="flex items-center gap-0">
-            {statusOrder.map((status, i) => (
-              <div key={status} className="flex items-center flex-1">
+            {stageOrder.map((stage, i) => (
+              <div key={stage} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className={`h-3 w-3 rounded-full border-2 ${i <= currentIndex ? 'bg-primary border-primary' : 'border-muted-foreground/30 bg-background'}`} />
-                  <span className={`text-xs mt-1.5 text-center ${i <= currentIndex ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>{status}</span>
+                  <span className={`text-xs mt-1.5 text-center ${i <= currentIndex ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>{stage}</span>
                 </div>
-                {i < statusOrder.length - 1 && (
+                {i < stageOrder.length - 1 && (
                   <div className={`h-0.5 flex-1 -mt-4 ${i < currentIndex ? 'bg-primary' : 'bg-muted-foreground/20'}`} />
                 )}
               </div>

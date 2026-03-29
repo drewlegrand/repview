@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode, type Context } from 'react';
-import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage } from '@/data/demo-data';
+import { opportunities as demoOpps, tasks as demoTasks, orders as demoOrders, type Opportunity, type Task, type OppStage, type Order, type OrderStage, type OrderStatus } from '@/data/demo-data';
 import { toast } from 'sonner';
 
 interface AppState {
@@ -13,7 +13,7 @@ interface AppState {
   deleteTask: (id: string) => void;
   addOrder: (order: Order) => void;
   updateOrder: (id: string, updates: Partial<Order>) => void;
-  moveOrderStage: (id: string, newStage: OrderStage) => void;
+  moveOrderStatus: (id: string, newStatus: OrderStatus) => void;
 }
 
 const fallbackState: AppState = {
@@ -27,7 +27,7 @@ const fallbackState: AppState = {
   deleteTask: () => undefined,
   addOrder: () => undefined,
   updateOrder: () => undefined,
-  moveOrderStage: () => undefined,
+  moveOrderStatus: () => undefined,
 };
 
 type AppStoreGlobal = typeof globalThis & { __APP_STORE_CONTEXT__?: Context<AppState | null> };
@@ -51,8 +51,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, ...updates } : o)));
   }, []);
 
-  const moveOrderStage = useCallback((id: string, newStage: OrderStage) => {
-    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, orderStage: newStage } : o)));
+  const moveOrderStatus = useCallback((id: string, newStatus: OrderStatus) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o)));
   }, []);
 
   const updateOpportunity = useCallback((id: string, updates: Partial<Opportunity>) => {
@@ -71,12 +71,12 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
             mfgOrderNumber: 'TBD',
             accountName: opp.accountName,
             manufacturerLine: opp.manufacturerLine,
-            status: 'Entered',
+            status: 'Pending',
             total: opp.value,
             orderDate: new Date().toISOString().slice(0, 10),
             expectedShip: '',
             project: opp.projectName || '',
-            orderStage: 'Pending',
+            orderStage: 'Entered',
             opportunityId: id,
           };
           toast.success(`Order ${orderNum} auto-created from "${opp.name}"`);
@@ -104,7 +104,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStage }}>
+    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStatus }}>
       {children}
     </AppStoreContext.Provider>
   );

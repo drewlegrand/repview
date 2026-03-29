@@ -1,10 +1,10 @@
 // ─── Types ──────────────────────────────────────────────────────────────
 export type AccountType = 'Architect' | 'Consultant' | 'Building Owner' | 'General Contractor' | 'Roofing Contractor' | 'Waterproofing Contractor' | 'Glazing Contractor' | 'Distributor' | 'Manufacturer' | 'Developer' | 'Facilities Owner';
 export type OppStage = 'Prospect' | 'Specification' | 'Specified' | 'Bid' | 'Awarded' | string;
-export type OrderStage = 'Pending' | 'Booked' | 'Shipped';
+export type OrderStatus = 'Pending' | 'Booked' | 'Shipped';
 export type ForecastStatus = 'Open' | 'Closed Won' | 'Closed Lost';
 export type QuoteStatus = 'Draft' | 'Internal Review' | 'Submitted' | 'Revised' | 'Accepted' | 'Rejected' | 'Expired';
-export type OrderStatus = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Delivered' | 'Complete' | 'Hold' | 'Cancelled';
+export type OrderStage = 'Entered' | 'Acknowledged' | 'In Production' | 'Shipped' | 'Delivered' | 'Complete' | 'Hold' | 'Cancelled';
 export type ProjectStatus = 'Pre-Design' | 'Design' | 'Bidding' | 'Construction' | 'Complete' | 'On Hold';
 
 export interface ManufacturerLine {
@@ -126,10 +126,10 @@ export const quotes: Quote[] = [
 ];
 
 export const orders: Order[] = [
-  { id: 'ord1', orderNumber: 'ORD-2026-0018', mfgOrderNumber: 'CST-882341', accountName: 'Summit Roofing Contractors', manufacturerLine: 'Carlisle SynTec', status: 'In Production', total: 615000, orderDate: '2026-01-20', expectedShip: '2026-04-10', project: 'Harbor Medical Campus', orderStage: 'Booked', opportunityId: 'o10' },
-  { id: 'ord2', orderNumber: 'ORD-2026-0019', mfgOrderNumber: 'SOP-443211', accountName: 'Capital Facilities Group', manufacturerLine: 'Soprema', status: 'Entered', total: 356000, orderDate: '2026-03-28', expectedShip: '2026-05-15', project: 'Capital Center', orderStage: 'Pending', opportunityId: 'o6' },
-  { id: 'ord3', orderNumber: 'ORD-2026-0017', mfgOrderNumber: 'TRM-991287', accountName: 'Patriot Development Corp', manufacturerLine: 'Tremco Roofing', status: 'Acknowledged', total: 275000, orderDate: '2026-03-25', expectedShip: '2026-05-01', project: 'Patriot Plaza Phase 2', orderStage: 'Booked' },
-  { id: 'ord4', orderNumber: 'ORD-2025-0145', mfgOrderNumber: 'KSP-228834', accountName: 'Patriot Development Corp', manufacturerLine: 'Kingspan Insulation', status: 'Delivered', total: 198000, orderDate: '2025-09-15', expectedShip: '2025-10-30', project: 'Patriot Plaza Phase 1', orderStage: 'Shipped', opportunityId: 'o12' },
+  { id: 'ord1', orderNumber: 'ORD-2026-0018', mfgOrderNumber: 'CST-882341', accountName: 'Summit Roofing Contractors', manufacturerLine: 'Carlisle SynTec', status: 'Booked', total: 615000, orderDate: '2026-01-20', expectedShip: '2026-04-10', project: 'Harbor Medical Campus', orderStage: 'In Production', opportunityId: 'o10' },
+  { id: 'ord2', orderNumber: 'ORD-2026-0019', mfgOrderNumber: 'SOP-443211', accountName: 'Capital Facilities Group', manufacturerLine: 'Soprema', status: 'Pending', total: 356000, orderDate: '2026-03-28', expectedShip: '2026-05-15', project: 'Capital Center', orderStage: 'Entered', opportunityId: 'o6' },
+  { id: 'ord3', orderNumber: 'ORD-2026-0017', mfgOrderNumber: 'TRM-991287', accountName: 'Patriot Development Corp', manufacturerLine: 'Tremco Roofing', status: 'Booked', total: 275000, orderDate: '2026-03-25', expectedShip: '2026-05-01', project: 'Patriot Plaza Phase 2', orderStage: 'Acknowledged' },
+  { id: 'ord4', orderNumber: 'ORD-2025-0145', mfgOrderNumber: 'KSP-228834', accountName: 'Patriot Development Corp', manufacturerLine: 'Kingspan Insulation', status: 'Shipped', total: 198000, orderDate: '2025-09-15', expectedShip: '2025-10-30', project: 'Patriot Plaza Phase 1', orderStage: 'Delivered', opportunityId: 'o12' },
   { id: 'ord5', orderNumber: 'ORD-2025-0152', mfgOrderNumber: 'CST-871290', accountName: 'Metro General Contractors', manufacturerLine: 'Carlisle SynTec', status: 'Shipped', total: 445000, orderDate: '2025-12-10', expectedShip: '2026-03-25', project: 'Metro Office Complex', orderStage: 'Shipped' },
 ];
 
