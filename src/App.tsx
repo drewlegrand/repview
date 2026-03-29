@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import AccountsPage from "./pages/AccountsPage";
 import ContactsPage from "./pages/ContactsPage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import OpportunityDetailPage from "./pages/OpportunityDetailPage";
 import QuotesPage from "./pages/QuotesPage";
