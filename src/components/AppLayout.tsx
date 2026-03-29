@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
   Package, BarChart3, RefreshCw, Settings, ChevronLeft,
-  ChevronRight, Search, Bell, Command, CheckSquare,
+  ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -30,13 +30,22 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
 
-  // Apply dark mode when inside the app
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('repview-theme');
+    return saved ? saved === 'dark' : true;
+  });
+
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('repview-theme', darkMode ? 'dark' : 'light');
     return () => {
       document.documentElement.classList.remove('dark');
     };
-  }, []);
+  }, [darkMode]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -120,7 +129,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </kbd>
             </button>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-accent text-[9px] font-bold text-accent-foreground flex items-center justify-center">3</span>
