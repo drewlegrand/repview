@@ -176,6 +176,11 @@ export default function ProjectDetailPage() {
                     </div>
                   </div>
                 ))}
+                <div className="flex justify-end pt-1">
+                  <Button variant="outline" size="sm" onClick={() => setNewOppOpen(true)}>
+                    <Plus className="h-3.5 w-3.5 mr-1" />New Opportunity
+                  </Button>
+                </div>
               </div>
             </TabsContent>
 
