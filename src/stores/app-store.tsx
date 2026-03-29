@@ -14,6 +14,7 @@ interface AppState {
   addOrder: (order: Order) => void;
   updateOrder: (id: string, updates: Partial<Order>) => void;
   moveOrderStatus: (id: string, newStatus: OrderStatus) => void;
+  moveOrderStage: (id: string, newStage: OrderStage) => void;
 }
 
 const fallbackState: AppState = {
@@ -28,6 +29,7 @@ const fallbackState: AppState = {
   addOrder: () => undefined,
   updateOrder: () => undefined,
   moveOrderStatus: () => undefined,
+  moveOrderStage: () => undefined,
 };
 
 type AppStoreGlobal = typeof globalThis & { __APP_STORE_CONTEXT__?: Context<AppState | null> };
@@ -53,6 +55,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const moveOrderStatus = useCallback((id: string, newStatus: OrderStatus) => {
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o)));
+  }, []);
+
+  const moveOrderStage = useCallback((id: string, newStage: OrderStage) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, orderStage: newStage } : o)));
   }, []);
 
   const updateOpportunity = useCallback((id: string, updates: Partial<Opportunity>) => {
@@ -104,7 +110,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStatus }}>
+    <AppStoreContext.Provider value={{ opportunities, tasks, orders, updateOpportunity, moveOpportunityStage, addTask, updateTask, deleteTask, addOrder, updateOrder, moveOrderStatus, moveOrderStage }}>
       {children}
     </AppStoreContext.Provider>
   );
