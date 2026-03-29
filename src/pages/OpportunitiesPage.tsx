@@ -3,23 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
 import { useAppStore } from '@/stores/app-store.tsx';
 import { DataTable } from '@/components/DataTable';
-import { StatusBadge, getOppStageVariant, getOrderStageVariant } from '@/components/StatusBadge';
+import { StatusBadge, getOppStageVariant } from '@/components/StatusBadge';
 import { OpportunityEditDialog } from '@/components/OpportunityEditDialog';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutGrid, List, ChevronRight, Package } from 'lucide-react';
+import { Plus, LayoutGrid, List } from 'lucide-react';
 import NewOpportunityDialog from '@/components/NewOpportunityDialog';
-import type { Opportunity, OppStage, OrderStage } from '@/data/demo-data';
+import type { Opportunity, OppStage } from '@/data/demo-data';
 
 const defaultOppStages: OppStage[] = ['Prospect', 'Specification', 'Specified', 'Bid', 'Awarded'];
-const orderStages: OrderStage[] = ['Pending', 'Booked', 'Shipped'];
 
 const fmt = (n: number) => '$' + (n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString());
+
+const getForecastVariant = (s: string) => s === 'Closed Won' ? 'success' as const : s === 'Closed Lost' ? 'destructive' as const : 'muted' as const;
 
 const columns = [
   { key: 'name', label: 'Opportunity', render: (o: Opportunity) => <span className="font-medium text-primary">{o.name}</span> },
   { key: 'accountName', label: 'Account' },
   { key: 'stage', label: 'Stage', render: (o: Opportunity) => <StatusBadge label={o.stage} variant={getOppStageVariant(o.stage)} /> },
-  { key: 'orderStage', label: 'Order Stage', render: (o: Opportunity) => o.orderStage ? <StatusBadge label={o.orderStage} variant={getOrderStageVariant(o.orderStage)} /> : <span className="text-muted-foreground">—</span> },
+  { key: 'forecastStatus', label: 'Forecast', render: (o: Opportunity) => <StatusBadge label={o.forecastStatus} variant={getForecastVariant(o.forecastStatus)} /> },
   { key: 'value', label: 'Value', render: (o: Opportunity) => <span className="font-semibold">{fmt(o.value)}</span> },
   { key: 'probability', label: 'Prob', render: (o: Opportunity) => `${o.probability}%` },
   { key: 'manufacturerLine', label: 'Mfg Line' },
@@ -32,13 +33,12 @@ export default function OpportunitiesPage() {
   const [view, setView] = useState<'list' | 'board'>('list');
   const [newOppOpen, setNewOppOpen] = useState(false);
   const [editOpp, setEditOpp] = useState<Opportunity | null>(null);
-  const [showOrderStages, setShowOrderStages] = useState(true);
   const navigate = useNavigate();
-  const { opportunities, moveOpportunityStage, updateOpportunity } = useAppStore();
+  const { opportunities, moveOpportunityStage } = useAppStore();
 
   const customStages = opportunities
     .map(o => o.stage)
-    .filter(s => !defaultOppStages.includes(s) && !orderStages.includes(s as any))
+    .filter(s => !defaultOppStages.includes(s))
     .filter((s, i, a) => a.indexOf(s) === i);
 
   const allOppStages = [...defaultOppStages, ...customStages];
@@ -46,41 +46,25 @@ export default function OpportunitiesPage() {
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    const destId = result.destination.droppableId;
-    const oppId = result.draggableId;
-
-    if ((orderStages as string[]).includes(destId)) {
-      updateOpportunity(oppId, { stage: 'Awarded', orderStage: destId as OrderStage });
-    } else {
-      if (destId !== 'Awarded') {
-        updateOpportunity(oppId, { stage: destId as OppStage, orderStage: undefined });
-      } else {
-        moveOpportunityStage(oppId, destId as OppStage);
-      }
-    }
+    moveOpportunityStage(result.draggableId, result.destination.droppableId as OppStage);
   };
 
-  const renderKanbanColumn = (stage: string, isOrderStage: boolean, fillWidth: boolean = false) => {
-    const stageOpps = isOrderStage
-      ? opportunities.filter(o => o.stage === 'Awarded' && o.orderStage === stage)
-      : stage === 'Awarded'
-        ? opportunities.filter(o => o.stage === 'Awarded' && !o.orderStage)
-        : opportunities.filter(o => o.stage === stage);
+  const renderKanbanColumn = (stage: string) => {
+    const stageOpps = opportunities.filter(o => o.stage === stage);
     const stageValue = stageOpps.reduce((s, o) => s + o.value, 0);
 
     return (
       <Droppable droppableId={stage} key={stage}>
         {(provided, snapshot) => (
-          <div ref={provided.innerRef} {...provided.droppableProps} className={fillWidth ? 'min-w-0' : 'flex-shrink-0 w-64'}>
+          <div ref={provided.innerRef} {...provided.droppableProps} className="min-w-0">
             <div className="flex items-center justify-between mb-2 px-1">
               <div className="flex items-center gap-2">
-                {isOrderStage && <Package className="h-3 w-3 text-muted-foreground" />}
-                <StatusBadge label={stage} variant={isOrderStage ? getOrderStageVariant(stage) : getOppStageVariant(stage)} />
+                <StatusBadge label={stage} variant={getOppStageVariant(stage)} />
                 <span className="text-xs text-muted-foreground font-medium">{stageOpps.length}</span>
               </div>
               <span className="text-xs font-semibold text-muted-foreground">{fmt(stageValue)}</span>
             </div>
-            <div className={`space-y-2 min-h-[120px] rounded-lg p-1.5 transition-colors ${snapshot.isDraggingOver ? 'bg-primary/5 ring-2 ring-primary/20' : isOrderStage ? 'bg-accent/30' : 'bg-muted/30'}`}>
+            <div className={`space-y-2 min-h-[120px] rounded-lg p-1.5 transition-colors ${snapshot.isDraggingOver ? 'bg-primary/5 ring-2 ring-primary/20' : 'bg-muted/30'}`}>
               {stageOpps.map((o, index) => (
                 <Draggable key={o.id} draggableId={o.id} index={index}>
                   {(prov, snap) => (
@@ -101,11 +85,6 @@ export default function OpportunitiesPage() {
                         <span className="text-[11px] text-muted-foreground">{o.manufacturerLine}</span>
                         <span className="text-[11px] text-muted-foreground">{o.closeDate}</span>
                       </div>
-                      {isOrderStage && o.orderStage && (
-                        <div className="mt-2 pt-2 border-t">
-                          <StatusBadge label={`Order: ${o.orderStage}`} variant={getOrderStageVariant(o.orderStage)} />
-                        </div>
-                      )}
                     </div>
                   )}
                 </Draggable>
@@ -120,8 +99,6 @@ export default function OpportunitiesPage() {
       </Droppable>
     );
   };
-
-  const visibleColumnCount = allOppStages.length + (showOrderStages ? orderStages.length : 0);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -147,25 +124,11 @@ export default function OpportunitiesPage() {
         <DataTable data={opportunities} columns={columns} searchPlaceholder="Search opportunities..." onRowClick={(o) => navigate(`/opportunities/${o.id}`)} />
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex w-full items-stretch gap-3 pb-4">
-            <div
-              className="grid flex-1 min-w-0 gap-3"
-              style={{ gridTemplateColumns: `repeat(${visibleColumnCount}, minmax(0, 1fr))` }}
-            >
-              {allOppStages.map(stage => renderKanbanColumn(stage, false, true))}
-              {showOrderStages && orderStages.map(stage => renderKanbanColumn(stage, true, true))}
-            </div>
-
-            <button
-              onClick={() => setShowOrderStages(!showOrderStages)}
-              className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border bg-card px-2 py-3 hover:bg-muted transition-colors"
-              title={showOrderStages ? 'Collapse order stages' : 'Expand order stages'}
-            >
-              <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${showOrderStages ? '' : 'rotate-180'}`} />
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider [writing-mode:vertical-lr] rotate-180">
-                Order Stages
-              </span>
-            </button>
+          <div
+            className="grid w-full gap-3 pb-4"
+            style={{ gridTemplateColumns: `repeat(${allOppStages.length}, minmax(0, 1fr))` }}
+          >
+            {allOppStages.map(stage => renderKanbanColumn(stage))}
           </div>
         </DragDropContext>
       )}
