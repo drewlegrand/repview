@@ -30,7 +30,7 @@ const columns = [
 ];
 
 export default function OpportunitiesPage() {
-  const [view, setView] = useState<'list' | 'board'>('list');
+  const [view, setView] = useState<'list' | 'board'>('board');
   const [newOppOpen, setNewOppOpen] = useState(false);
   const [editOpp, setEditOpp] = useState<Opportunity | null>(null);
   const navigate = useNavigate();
