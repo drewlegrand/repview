@@ -13,7 +13,7 @@ interface AppState {
   deleteTask: (id: string) => void;
   addOrder: (order: Order) => void;
   updateOrder: (id: string, updates: Partial<Order>) => void;
-  moveOrderStage: (id: string, newStage: OrderStage) => void;
+  moveOrderStatus: (id: string, newStatus: OrderStatus) => void;
 }
 
 const fallbackState: AppState = {
