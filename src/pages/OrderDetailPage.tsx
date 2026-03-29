@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 const fmt = (n: number) => '$' + n.toLocaleString();
 const allStatuses = ['Pending', 'Booked', 'Shipped'];
-const allStages = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Delivered', 'Complete', 'Hold', 'Cancelled'];
+const allStages = ['Entered', 'Acknowledged', 'In Production', 'Shipped', 'Complete', 'Hold', 'Cancelled'];
 
 export default function OrderDetailPage() {
   const { id } = useParams();
