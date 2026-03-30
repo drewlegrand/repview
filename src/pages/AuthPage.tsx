@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [forgotMode, setForgotMode] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -47,11 +49,14 @@ export default function AuthPage() {
           password,
           options: {
             data: { display_name: displayName },
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `${window.location.origin}/auth`,
           },
         });
         if (error) throw error;
-        toast.success('Account created! Check your email to verify.');
+        setSignupSuccess(true);
+        setIsLogin(true);
+        setPassword('');
+        setDisplayName('');
       }
     } catch (err: any) {
       toast.error(err.message || 'Authentication failed');
@@ -125,6 +130,14 @@ export default function AuthPage() {
               : 'Get started with Repview today'}
           </p>
         </div>
+        {signupSuccess && isLogin && (
+          <Alert className="border-green-500/50 bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription>
+              Your account has been created! A verification email has been sent to <strong>{email}</strong>. Please verify your email before signing in.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
