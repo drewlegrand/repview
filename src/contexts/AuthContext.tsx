@@ -51,12 +51,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setMfaEnrollRequired(false);
       }
     } else if (data.currentLevel === 'aal1' && data.nextLevel === 'aal1') {
-      // User has no MFA enrolled — enforce enrollment
-      const { data: factorsData } = await supabase.auth.mfa.listFactors();
-      const hasVerifiedTotp = factorsData?.totp?.some(f => f.status === 'verified');
-      if (!hasVerifiedTotp) {
-        setMfaEnrollRequired(true);
+      // User has no MFA enrolled — enforce enrollment (bypass for test account)
+      const { data: { user } } = await supabase.auth.getUser();
+      const isTestAccount = user?.email === 'test@repview.demo';
+      if (!isTestAccount) {
+        const { data: factorsData } = await supabase.auth.mfa.listFactors();
+        const hasVerifiedTotp = factorsData?.totp?.some(f => f.status === 'verified');
+        if (!hasVerifiedTotp) {
+          setMfaEnrollRequired(true);
+          setMfaRequired(false);
+        }
+      } else {
         setMfaRequired(false);
+        setMfaEnrollRequired(false);
       }
     } else {
       setMfaRequired(false);
