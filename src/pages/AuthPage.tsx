@@ -200,7 +200,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-sidebar-foreground border-0 opacity-100 mr-0 mx-0" disabled={loading}>
+          <Button type="submit" className="w-full bg-sidebar-foreground border-none shadow-none ring-0 opacity-100 mr-0 mx-0" disabled={loading}>
             {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             {isLogin ? 'Sign In' : 'Create Account'}
           </Button>
