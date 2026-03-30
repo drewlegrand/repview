@@ -52,7 +52,10 @@ export default function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success('Account created! Check your email to verify.');
+        setSignupSuccess(true);
+        setIsLogin(true);
+        setPassword('');
+        setDisplayName('');
       }
     } catch (err: any) {
       toast.error(err.message || 'Authentication failed');
