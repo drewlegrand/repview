@@ -71,7 +71,7 @@ export default function AuthPage() {
       <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-foreground">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl text-primary-foreground font-bold text-lg bg-sidebar-foreground">
               R
             </div>
             <h1 className="text-2xl font-bold text-primary-foreground">Reset your password</h1>
@@ -118,7 +118,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl text-primary-foreground font-bold text-lg bg-sidebar-foreground">
             R
           </div>
           <h1 className="text-2xl font-bold text-primary-foreground">
