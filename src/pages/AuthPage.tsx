@@ -212,7 +212,7 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-primary font-medium hover:underline"
+            className="font-medium hover:underline text-info"
           >
             {isLogin ? 'Sign up' : 'Sign in'}
           </button>
