@@ -129,6 +129,14 @@ export default function AuthPage() {
               : 'Get started with Repview today'}
           </p>
         </div>
+        {signupSuccess && isLogin && (
+          <Alert className="border-green-500/50 bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription>
+              Your account has been created! A verification email has been sent to <strong>{email}</strong>. Please verify your email before signing in.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
