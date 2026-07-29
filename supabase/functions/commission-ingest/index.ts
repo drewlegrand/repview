@@ -2,7 +2,7 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import * as XLSX from "npm:xlsx@0.18.5";
 import { z } from "npm:zod@3";
-import { generateText, Output } from "npm:ai";
+import { generateText, NoObjectGeneratedError, Output } from "npm:ai";
 import { createLovableAiGatewayProvider } from "../_shared/ai-gateway.ts";
 import {
   findReportedTotal,
@@ -12,31 +12,47 @@ import {
   ParsedInvoice,
 } from "./parse.ts";
 
-const ColumnsSchema = z.object({
-  invoiceNumber: z.number(),
-  invoiceDate: z.number().nullable(),
-  customerName: z.number().nullable(),
-  customerNumber: z.number().nullable(),
-  orderReference: z.number().nullable(),
-  projectReference: z.number().nullable(),
-  projectName: z.number().nullable(),
-  salesAmount: z.number().nullable(),
-  commissionBase: z.number().nullable(),
-  commissionRate: z.number().nullable(),
-  commissionAmount: z.number().nullable(),
-  productCode: z.number().nullable(),
-  productName: z.number().nullable(),
-  quantity: z.number().nullable(),
-  unitPrice: z.number().nullable(),
-  lineType: z.number().nullable(),
+const COLUMN_KEYS = [
+  "invoiceNumber",
+  "invoiceDate",
+  "customerName",
+  "customerNumber",
+  "orderReference",
+  "projectReference",
+  "projectName",
+  "salesAmount",
+  "commissionBase",
+  "commissionRate",
+  "commissionAmount",
+  "productCode",
+  "productName",
+  "quantity",
+  "unitPrice",
+  "lineType",
+] as const;
+
+const num = z.number().nullable().optional();
+
+// Flat schema: far more reliable across models than a nested one.
+const FlatMappingSchema = z.object({
+  headerRow: num,
+  dataStartRow: num,
+  dataEndRow: num,
+  grain: z.string().nullable().optional(),
+  periodLabel: z.string().nullable().optional(),
+  ...(Object.fromEntries(COLUMN_KEYS.map((k) => [k, num])) as Record<string, typeof num>),
 });
+
+const ColumnsSchema = z.object(
+  Object.fromEntries(COLUMN_KEYS.map((k) => [k, num])) as Record<string, typeof num>,
+);
 
 const MappingSchema = z.object({
   headerRow: z.number(),
   dataStartRow: z.number(),
   dataEndRow: z.number(),
   grain: z.enum(["invoice", "line"]),
-  periodLabel: z.string().nullable(),
+  periodLabel: z.string().nullable().optional(),
   columns: ColumnsSchema,
 });
 
