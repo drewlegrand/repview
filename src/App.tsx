@@ -21,6 +21,7 @@ import TasksPage from "./pages/TasksPage";
 import QuotesPage from "./pages/QuotesPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
 import OrdersPage from "./pages/OrdersPage";
+import CommissionsPage from "./pages/CommissionsPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import AccountDetailPage from "./pages/AccountDetailPage";
 import ContactDetailPage from "./pages/ContactDetailPage";
@@ -87,6 +88,7 @@ function ProtectedRoutes() {
           <Route path="/quotes/:id" element={<QuoteDetailPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
+          <Route path="/commissions" element={<CommissionsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/sync" element={<SyncCenterPage />} />
           <Route path="/ai" element={<AIAssistantPage />} />
