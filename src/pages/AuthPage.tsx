@@ -49,7 +49,7 @@ export default function AuthPage() {
           password,
           options: {
             data: { display_name: displayName },
-            emailRedirectTo: `${window.location.origin}/auth`,
+            emailRedirectTo: `${window.location.origin}/auth${window.location.search}`,
           },
         });
         if (error) throw error;
