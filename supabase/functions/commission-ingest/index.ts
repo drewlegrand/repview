@@ -304,7 +304,7 @@ Deno.serve(async (req) => {
       if (!apiKey) return json({ error: "AI is not configured" }, 500);
       const target = body.sheetNames?.[0] ?? allSheets[0];
       const grid = gridOf(wb, target);
-      const mapping = await detectMapping(target, grid, apiKey);
+      const { mapping, lowConfidence, warning } = await detectMapping(target, grid, apiKey);
       const { invoices, rowsParsed, parsedTotal } = parseGrid(grid, {
         ...mapping,
         dataEndRow: Math.min(mapping.dataEndRow, grid.length - 1),
@@ -313,6 +313,8 @@ Deno.serve(async (req) => {
         sheets: allSheets,
         analyzedSheet: target,
         mapping,
+        lowConfidence,
+        warning,
         headers: (grid[mapping.headerRow] ?? []).map((v) =>
           v === null || v === undefined ? "" : String(v instanceof Date ? v.toISOString().slice(0, 10) : v),
         ),
