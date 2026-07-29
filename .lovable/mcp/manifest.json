@@ -1,0 +1,330 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://aztputrohyqwzvlymalo.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "repview-mcp",
+      "version": "0.1.0",
+      "title": "Repview CRM"
+    },
+    "tools": [
+      {
+        "name": "pipeline_summary",
+        "title": "Pipeline summary",
+        "description": "Return headline CRM metrics: pipeline value by stage, revenue by manufacturer line, forecast by rep, and dashboard totals.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_accounts",
+        "title": "List accounts",
+        "description": "List CRM accounts (architects, contractors, owners, distributors) with optional filtering by name, type, or territory.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "search": {
+              "description": "Case-insensitive match on account name or city.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Account type, e.g. Architect, General Contractor, Distributor.",
+              "type": "string"
+            },
+            "territory": {
+              "description": "Sales territory name.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_contacts",
+        "title": "List contacts",
+        "description": "List CRM contacts, optionally filtered by name, account name, or influence level.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "search": {
+              "description": "Case-insensitive match on contact name, title, or email.",
+              "type": "string"
+            },
+            "account_name": {
+              "description": "Filter to contacts at this account.",
+              "type": "string"
+            },
+            "influence_level": {
+              "type": "string",
+              "enum": [
+                "High",
+                "Medium",
+                "Low"
+              ]
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_opportunities",
+        "title": "List opportunities",
+        "description": "List pipeline opportunities with optional filters for stage, forecast status, manufacturer line, owner, and minimum value.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "stage": {
+              "description": "Pipeline stage, e.g. Prospect, Specification, Bid, Awarded.",
+              "type": "string"
+            },
+            "forecast_status": {
+              "type": "string",
+              "enum": [
+                "Open",
+                "Closed Won",
+                "Closed Lost"
+              ]
+            },
+            "manufacturer_line": {
+              "description": "Manufacturer line name.",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Opportunity owner / rep name.",
+              "type": "string"
+            },
+            "min_value": {
+              "description": "Only return opportunities worth at least this amount.",
+              "type": "number"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_quotes",
+        "title": "List quotes",
+        "description": "List quotes with optional filters for status, account, or manufacturer line.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Draft, Internal Review, Submitted, Revised, Accepted, Rejected, Expired.",
+              "type": "string"
+            },
+            "account_name": {
+              "type": "string"
+            },
+            "manufacturer_line": {
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_orders",
+        "title": "List orders",
+        "description": "List manufacturer orders with optional filters for status, fulfillment stage, account, or manufacturer line. Useful for checking what has shipped.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "Booked",
+                "Shipped"
+              ]
+            },
+            "order_stage": {
+              "description": "Entered, Acknowledged, In Production, Shipped, Complete, Hold, Cancelled.",
+              "type": "string"
+            },
+            "account_name": {
+              "type": "string"
+            },
+            "manufacturer_line": {
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_projects",
+        "title": "List projects",
+        "description": "List construction projects tracked in the CRM, with optional status, state, or name filters.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "search": {
+              "description": "Case-insensitive match on project name, address, or architect.",
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pre-Design",
+                "Design",
+                "Bidding",
+                "Complete"
+              ]
+            },
+            "state": {
+              "description": "Two-letter state code.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_tasks",
+        "title": "List tasks",
+        "description": "List follow-up tasks with optional filters for status, priority, or owner.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Open",
+                "In Progress",
+                "Complete"
+              ]
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "High",
+                "Medium",
+                "Low"
+              ]
+            },
+            "owner": {
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_profile",
+        "title": "Get my profile",
+        "description": "Return the signed-in Repview user's profile record (display name, avatar).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
