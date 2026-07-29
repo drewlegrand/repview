@@ -2,7 +2,7 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import * as XLSX from "npm:xlsx@0.18.5";
 import { z } from "npm:zod@3";
-import { generateText, Output } from "npm:ai";
+import { generateText, NoObjectGeneratedError, Output } from "npm:ai";
 import { createLovableAiGatewayProvider } from "../_shared/ai-gateway.ts";
 import {
   findReportedTotal,
@@ -12,31 +12,47 @@ import {
   ParsedInvoice,
 } from "./parse.ts";
 
-const ColumnsSchema = z.object({
-  invoiceNumber: z.number(),
-  invoiceDate: z.number().nullable(),
-  customerName: z.number().nullable(),
-  customerNumber: z.number().nullable(),
-  orderReference: z.number().nullable(),
-  projectReference: z.number().nullable(),
-  projectName: z.number().nullable(),
-  salesAmount: z.number().nullable(),
-  commissionBase: z.number().nullable(),
-  commissionRate: z.number().nullable(),
-  commissionAmount: z.number().nullable(),
-  productCode: z.number().nullable(),
-  productName: z.number().nullable(),
-  quantity: z.number().nullable(),
-  unitPrice: z.number().nullable(),
-  lineType: z.number().nullable(),
+const COLUMN_KEYS = [
+  "invoiceNumber",
+  "invoiceDate",
+  "customerName",
+  "customerNumber",
+  "orderReference",
+  "projectReference",
+  "projectName",
+  "salesAmount",
+  "commissionBase",
+  "commissionRate",
+  "commissionAmount",
+  "productCode",
+  "productName",
+  "quantity",
+  "unitPrice",
+  "lineType",
+] as const;
+
+const num = z.number().nullable().optional();
+
+// Flat schema: far more reliable across models than a nested one.
+const FlatMappingSchema = z.object({
+  headerRow: num,
+  dataStartRow: num,
+  dataEndRow: num,
+  grain: z.string().nullable().optional(),
+  periodLabel: z.string().nullable().optional(),
+  ...(Object.fromEntries(COLUMN_KEYS.map((k) => [k, num])) as Record<string, typeof num>),
 });
+
+const ColumnsSchema = z.object(
+  Object.fromEntries(COLUMN_KEYS.map((k) => [k, num])) as Record<string, typeof num>,
+);
 
 const MappingSchema = z.object({
   headerRow: z.number(),
   dataStartRow: z.number(),
   dataEndRow: z.number(),
   grain: z.enum(["invoice", "line"]),
-  periodLabel: z.string().nullable(),
+  periodLabel: z.string().nullable().optional(),
   columns: ColumnsSchema,
 });
 
@@ -77,7 +93,126 @@ function preview(grid: unknown[][], head = 14, tail = 4) {
   return lines.join("\n");
 }
 
-async function detectMapping(sheetName: string, grid: unknown[][], apiKey: string): Promise<Mapping> {
+function clampMapping(m: Mapping, grid: unknown[][]): Mapping {
+  const last = Math.max(0, grid.length - 1);
+  const clamp = (n: number) => Math.min(Math.max(0, Math.round(n || 0)), last);
+  let start = clamp(m.dataStartRow);
+  let end = clamp(m.dataEndRow);
+  if (end < start) [start, end] = [end, start];
+  return { ...m, headerRow: clamp(m.headerRow), dataStartRow: start, dataEndRow: end };
+}
+
+const HEADER_HINTS = [
+  "invoice",
+  "date",
+  "customer",
+  "commission",
+  "amount",
+  "sales",
+  "rate",
+  "order",
+  "project",
+  "qty",
+  "quantity",
+  "product",
+  "item",
+  "description",
+];
+
+function scoreHeaderRow(row: unknown[]): number {
+  let score = 0;
+  for (const cell of row) {
+    if (typeof cell !== "string") continue;
+    const v = cell.toLowerCase().trim();
+    if (!v || v.length > 40) continue;
+    if (HEADER_HINTS.some((h) => v.includes(h))) score++;
+  }
+  return score;
+}
+
+function findColumn(header: unknown[], patterns: string[]): number | null {
+  for (let i = 0; i < header.length; i++) {
+    const cell = header[i];
+    if (typeof cell !== "string") continue;
+    const v = cell.toLowerCase().replace(/[^a-z0-9]/g, " ");
+    if (patterns.some((p) => v.includes(p))) return i;
+  }
+  return null;
+}
+
+/** Deterministic fallback used when the model can't produce a usable mapping. */
+function heuristicMapping(grid: unknown[][]): Mapping {
+  let headerRow = 0;
+  let best = -1;
+  grid.forEach((row, i) => {
+    const s = scoreHeaderRow(row ?? []);
+    if (s > best) {
+      best = s;
+      headerRow = i;
+    }
+  });
+  const header = grid[headerRow] ?? [];
+  const bottomHeader = headerRow > grid.length / 2;
+  const columns = {
+    invoiceNumber: findColumn(header, ["invoice", "document", "doc no", "inv no"]) ?? 0,
+    invoiceDate: findColumn(header, ["date"]),
+    customerName: findColumn(header, ["customer", "client", "account name", "sold to"]),
+    customerNumber: findColumn(header, ["customer no", "cust no", "account no"]),
+    orderReference: findColumn(header, ["order"]),
+    projectReference: findColumn(header, ["job", "project no"]),
+    projectName: findColumn(header, ["project"]),
+    salesAmount: findColumn(header, ["sales", "net amount", "total amount", "extended"]),
+    commissionBase: findColumn(header, ["comm base", "commissionable", "basis"]),
+    commissionRate: findColumn(header, ["rate", "percent", "pct"]),
+    commissionAmount: findColumn(header, ["commission amount", "commission earned", "commission"]),
+    productCode: findColumn(header, ["item", "sku", "product code", "part"]),
+    productName: findColumn(header, ["description", "product"]),
+    quantity: findColumn(header, ["qty", "quantity"]),
+    unitPrice: findColumn(header, ["unit price", "price"]),
+    lineType: null,
+  };
+  return clampMapping(
+    {
+      headerRow,
+      dataStartRow: bottomHeader ? 0 : headerRow + 1,
+      dataEndRow: bottomHeader ? Math.max(0, headerRow - 1) : grid.length - 1,
+      grain: "invoice",
+      periodLabel: null,
+      columns,
+    } as Mapping,
+    grid,
+  );
+}
+
+function toMapping(flat: Record<string, unknown>, grid: unknown[][]): Mapping {
+  const pick = (k: string) => {
+    const v = flat[k];
+    return typeof v === "number" ? Math.round(v) : null;
+  };
+  const columns = Object.fromEntries(COLUMN_KEYS.map((k) => [k, pick(k)])) as Mapping["columns"];
+  if (columns.invoiceNumber === null || columns.invoiceNumber === undefined) {
+    throw new Error("no invoice number column detected");
+  }
+  const n = (v: unknown, fallback: number) => (typeof v === "number" ? v : fallback);
+  return clampMapping(
+    {
+      headerRow: n(flat.headerRow, 0),
+      dataStartRow: n(flat.dataStartRow, 0),
+      dataEndRow: n(flat.dataEndRow, grid.length - 1),
+      grain: flat.grain === "line" ? "line" : "invoice",
+      periodLabel: typeof flat.periodLabel === "string" ? flat.periodLabel : null,
+      columns,
+    },
+    grid,
+  );
+}
+
+async function callDetect(
+  sheetName: string,
+  grid: unknown[][],
+  apiKey: string,
+  strict: boolean,
+): Promise<Mapping> {
   const gateway = createLovableAiGatewayProvider(apiKey);
   const prompt = [
     `Sheet name: "${sheetName}". Total rows: ${grid.length} (0-indexed).`,
@@ -87,16 +222,51 @@ async function detectMapping(sheetName: string, grid: unknown[][], apiKey: strin
     "Set dataStartRow to the first row containing a real invoice/document record and dataEndRow to the last one (exclude title, header and totals rows).",
     'Set grain to "line" when a single invoice number repeats across multiple product rows, otherwise "invoice".',
     "Use null for any field the sheet does not have. commissionBase is a separate commissionable-amount column when present (distinct from total sales amount).",
+    "Answer with a SINGLE FLAT object. Every column field is a top-level key holding a 0-based column index or null.",
+    strict
+      ? 'Respond exactly in this shape (no nesting): {"headerRow":0,"dataStartRow":1,"dataEndRow":50,"grain":"invoice","periodLabel":null,"invoiceNumber":0,"invoiceDate":1,"customerName":2,"customerNumber":null,"orderReference":null,"projectReference":null,"projectName":null,"salesAmount":5,"commissionBase":null,"commissionRate":6,"commissionAmount":7,"productCode":null,"productName":null,"quantity":null,"unitPrice":null,"lineType":null}'
+      : "",
     "",
     preview(grid),
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
-  const { output } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
-    output: Output.object({ schema: MappingSchema }),
-    prompt,
-  });
-  return output as Mapping;
+  try {
+    const { output } = await generateText({
+      model: gateway("google/gemini-3.6-flash"),
+      output: Output.object({ schema: FlatMappingSchema }),
+      prompt,
+    });
+    return toMapping(output as Record<string, unknown>, grid);
+  } catch (error) {
+    if (NoObjectGeneratedError.isInstance(error) && error.text) {
+      const cleaned = error.text.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+      const parsed = FlatMappingSchema.safeParse(JSON.parse(cleaned));
+      if (parsed.success) return toMapping(parsed.data as Record<string, unknown>, grid);
+    }
+    throw error;
+  }
+}
+
+async function detectMapping(
+  sheetName: string,
+  grid: unknown[][],
+  apiKey: string,
+): Promise<{ mapping: Mapping; lowConfidence: boolean; warning?: string }> {
+  try {
+    return { mapping: await callDetect(sheetName, grid, apiKey, false), lowConfidence: false };
+  } catch (e1) {
+    console.error("layout detection attempt 1 failed:", e1 instanceof Error ? e1.message : e1);
+    try {
+      return { mapping: await callDetect(sheetName, grid, apiKey, true), lowConfidence: false };
+    } catch (e2) {
+      console.error("layout detection attempt 2 failed:", e2 instanceof Error ? e2.message : e2);
+      return {
+        mapping: heuristicMapping(grid),
+        lowConfidence: true,
+        warning: "Couldn't auto-detect the layout — review the column mapping below before importing.",
+      };
+    }
+  }
 }
 
 Deno.serve(async (req) => {
@@ -134,7 +304,7 @@ Deno.serve(async (req) => {
       if (!apiKey) return json({ error: "AI is not configured" }, 500);
       const target = body.sheetNames?.[0] ?? allSheets[0];
       const grid = gridOf(wb, target);
-      const mapping = await detectMapping(target, grid, apiKey);
+      const { mapping, lowConfidence, warning } = await detectMapping(target, grid, apiKey);
       const { invoices, rowsParsed, parsedTotal } = parseGrid(grid, {
         ...mapping,
         dataEndRow: Math.min(mapping.dataEndRow, grid.length - 1),
@@ -143,6 +313,8 @@ Deno.serve(async (req) => {
         sheets: allSheets,
         analyzedSheet: target,
         mapping,
+        lowConfidence,
+        warning,
         headers: (grid[mapping.headerRow] ?? []).map((v) =>
           v === null || v === undefined ? "" : String(v instanceof Date ? v.toISOString().slice(0, 10) : v),
         ),
