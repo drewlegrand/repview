@@ -203,9 +203,11 @@ export function parseGrid(grid: unknown[][], mapping: Mapping) {
   const invoices = order.map((k) => byInvoice.get(k)!);
   for (const inv of invoices) {
     inv.commissionPaid = Math.abs(inv.commissionAmount) > 0.004;
-    if (inv.commissionRate !== null && Math.abs(inv.commissionBase) > 0.004) {
+    const blended = inv.lines.length > 1 && new Set(inv.lines.map((l) => l.commissionRate)).size > 1;
+    if (!blended && inv.commissionRate !== null && Math.abs(inv.commissionBase) > 0.004) {
       const expected = round2(inv.commissionBase * inv.commissionRate);
-      if (Math.abs(expected - inv.commissionAmount) > 0.05) {
+      const tolerance = Math.max(0.05, 0.01 * Math.max(1, inv.lines.length));
+      if (Math.abs(expected - inv.commissionAmount) > tolerance) {
         inv.discrepancyNote =
           `Reported commission ${inv.commissionAmount.toFixed(2)} differs from base x rate (${expected.toFixed(2)})`;
       }
@@ -235,8 +237,13 @@ function extractReference(value: unknown): string | null {
 export function findReportedTotal(grid: unknown[][], mapping: Mapping): number | null {
   const col = mapping.columns.commissionAmount;
   if (col === null || col === undefined) return null;
-  for (let r = grid.length - 1; r > mapping.dataEndRow; r--) {
-    const n = toNumber(grid[r]?.[col]);
+  // Walk up from the bottom across rows that are NOT invoice records (header,
+  // totals, footer) and take the first numeric value in the commission column.
+  for (let r = grid.length - 1; r >= 0; r--) {
+    const row = grid[r];
+    if (!row) continue;
+    if (isDocumentNumber(row[mapping.columns.invoiceNumber])) return null;
+    const n = toNumber(row[col]);
     if (n !== null && Math.abs(n) > 0) return round2(n);
   }
   return null;
