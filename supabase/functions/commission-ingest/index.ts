@@ -143,6 +143,10 @@ Deno.serve(async (req) => {
         sheets: allSheets,
         analyzedSheet: target,
         mapping,
+        headers: (grid[mapping.headerRow] ?? []).map((v) =>
+          v === null || v === undefined ? "" : String(v instanceof Date ? v.toISOString().slice(0, 10) : v),
+        ),
+        columnCount: Math.max(...grid.slice(0, 60).map((r) => r?.length ?? 0), 0),
         rowsParsed,
         invoiceCount: invoices.length,
         parsedTotal,
