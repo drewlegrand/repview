@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Building2, Users, FolderKanban, Target, FileText,
-  Package, BarChart3, RefreshCw, Settings, ChevronLeft,
+  Package, BarChart3, RefreshCw, Settings, ChevronLeft, Receipt,
   ChevronRight, Search, Bell, Command, CheckSquare, Sun, Moon, LogOut,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ const navItems = [
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
   
   { label: 'Orders', icon: Package, path: '/orders' },
+  { label: 'Commissions', icon: Receipt, path: '/commissions' },
   { label: 'Projects', icon: FolderKanban, path: '/projects' },
   { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Accounts', icon: Building2, path: '/accounts' },
