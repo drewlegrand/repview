@@ -8,6 +8,7 @@ import { AppStoreProvider } from "@/stores/app-store";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { MFAChallenge, isDeviceRemembered } from "@/components/MFAChallenge";
 import AuthPage from "./pages/AuthPage";
+import OAuthConsentPage from "./pages/OAuthConsentPage";
 import MFASetupPage from "./pages/MFASetupPage";
 import Dashboard from "./pages/Dashboard";
 import AccountsPage from "./pages/AccountsPage";
@@ -109,7 +110,9 @@ function AuthGate() {
   }
 
   if (user) {
-    return <Navigate to="/" replace />;
+    const next = new URLSearchParams(window.location.search).get("next");
+    const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+    return <Navigate to={safeNext} replace />;
   }
 
   return <AuthPage />;
@@ -125,6 +128,7 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<AuthGate />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
             <Route path="/*" element={<ProtectedRoutes />} />
           </Routes>
         </AuthProvider>
