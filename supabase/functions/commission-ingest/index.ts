@@ -10,6 +10,7 @@ import {
   normalizeInvoiceNumber,
   parseGrid,
   ParsedInvoice,
+  toNumber,
 } from "./parse.ts";
 
 const COLUMN_KEYS = [
@@ -194,7 +195,7 @@ function toMapping(flat: Record<string, unknown>, grid: unknown[][]): Mapping {
     throw new Error("no invoice number column detected");
   }
   const n = (v: unknown, fallback: number) => (typeof v === "number" ? v : fallback);
-  return clampMapping(
+  return repairMapping(clampMapping(
     {
       headerRow: n(flat.headerRow, 0),
       dataStartRow: n(flat.dataStartRow, 0),
@@ -204,7 +205,83 @@ function toMapping(flat: Record<string, unknown>, grid: unknown[][]): Mapping {
       columns,
     },
     grid,
-  );
+  ), grid);
+}
+
+/**
+ * Deterministic repair of an AI-produced mapping. Models routinely drop the
+ * money columns (or point commissionAmount at the base/rate column), which used
+ * to silently import every invoice at 0.00. Money columns are re-derived from
+ * the header labels and then sanity-checked against the actual numbers.
+ */
+export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
+  const header = (grid[m.headerRow] ?? []) as unknown[];
+  const columns = { ...m.columns };
+
+  const byLabel = {
+    salesAmount: findColumn(header, ["sales", "amount", "net", "extended", "invoice total"]),
+    commissionBase: findColumn(header, ["base", "commissionable", "basis"]),
+    commissionRate: findColumn(header, ["rate", "%", "percent", "pct"]),
+    commissionAmount: findColumn(header, ["commision", "commission", "comm earned", "comm amt", "earned"]),
+  };
+
+  // Prefer the most specific label match for each money column, and never let
+  // two money roles share a single column.
+  const taken = new Set<number>();
+  const claim = (key: keyof typeof byLabel, preferLabel: boolean) => {
+    const current = columns[key];
+    const label = byLabel[key];
+    const chosen =
+      preferLabel && label !== null && label !== undefined
+        ? label
+        : current !== null && current !== undefined && !taken.has(current)
+          ? current
+          : label;
+    if (chosen === null || chosen === undefined || taken.has(chosen)) {
+      columns[key] = current !== null && current !== undefined && !taken.has(current) ? current : null;
+    } else {
+      columns[key] = chosen;
+    }
+    const final = columns[key];
+    if (final !== null && final !== undefined) taken.add(final);
+  };
+
+  // commissionAmount first: it is the number everything downstream depends on.
+  claim("commissionAmount", byLabel.commissionAmount !== null);
+  claim("commissionRate", byLabel.commissionRate !== null);
+  claim("commissionBase", byLabel.commissionBase !== null);
+  claim("salesAmount", byLabel.salesAmount !== null);
+
+  // Last resort: if there is still no commission column, look for a numeric
+  // column whose total matches base x rate.
+  if (columns.commissionAmount === null || columns.commissionAmount === undefined) {
+    const width = Math.max(...grid.map((r) => r?.length ?? 0), 0);
+    const rows = grid.slice(m.dataStartRow, m.dataEndRow + 1);
+    const sumOf = (ci: number) =>
+      rows.reduce((s, r) => s + (toNumber(r?.[ci]) ?? 0), 0);
+    const expected = rows.reduce((s, r) => {
+      const base = toNumber(r?.[columns.commissionBase as number]) ?? 0;
+      const rate = toNumber(r?.[columns.commissionRate as number]) ?? 0;
+      return s + base * rate;
+    }, 0);
+    if (Math.abs(expected) > 0.01) {
+      let bestCol: number | null = null;
+      let bestDelta = Infinity;
+      for (let ci = 0; ci < width; ci++) {
+        if (taken.has(ci)) continue;
+        const delta = Math.abs(sumOf(ci) - expected);
+        if (delta < bestDelta) {
+          bestDelta = delta;
+          bestCol = ci;
+        }
+      }
+      if (bestCol !== null && bestDelta <= Math.max(1, Math.abs(expected) * 0.02)) {
+        columns.commissionAmount = bestCol;
+      }
+    }
+  }
+
+  return { ...m, columns };
 }
 
 async function callDetect(
