@@ -10,6 +10,7 @@ import {
   normalizeInvoiceNumber,
   parseGrid,
   ParsedInvoice,
+  toNumber,
 } from "./parse.ts";
 
 const COLUMN_KEYS = [
