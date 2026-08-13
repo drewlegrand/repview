@@ -20,7 +20,7 @@ const navItems = [
   { label: 'Opportunities', icon: Target, path: '/opportunities' },
   
   { label: 'Orders', icon: Package, path: '/orders' },
-  { label: 'Commissions', icon: Receipt, path: '/commissions' },
+  { label: 'Commission Imports', icon: Receipt, path: '/commissions' },
   { label: 'Projects', icon: FolderKanban, path: '/projects' },
   { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
   { label: 'Accounts', icon: Building2, path: '/accounts' },
