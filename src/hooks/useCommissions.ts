@@ -141,35 +141,6 @@ export function useHistory() {
   });
 }
 
-export function useMarkReceived() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, received }: { id: string; received: boolean }) => {
-      const { data: userRes } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from('commission_invoices')
-        .update({ marked_received: received, marked_received_at: received ? new Date().toISOString() : null })
-        .eq('id', id);
-      if (error) throw error;
-      if (userRes.user) {
-        await supabase.from('commission_invoice_history').insert({
-          user_id: userRes.user.id,
-          invoice_id: id,
-          change_type: 'updated',
-          field_name: 'marked_received',
-          old_value: String(!received),
-          new_value: String(received),
-          source: 'manual',
-        });
-      }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['commission_invoices'] });
-      qc.invalidateQueries({ queryKey: ['commission_history'] });
-    },
-  });
-}
-
 export const money = (n: number | null | undefined) =>
   n === null || n === undefined
     ? '—'
