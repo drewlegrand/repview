@@ -262,31 +262,6 @@ export function UploadTab() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="text-sm font-medium">Preview</div>
-              <div className="overflow-x-auto rounded-md border">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs text-muted-foreground">
-                    <tr><th className="p-2 text-left">Invoice</th><th className="p-2 text-left">Customer</th><th className="p-2 text-right">Commission</th><th className="p-2 text-left">On report</th></tr>
-                  </thead>
-                  <tbody>
-                    {analysis.sample.map((s) => (
-                      <tr key={s.invoiceNumber} className="border-t">
-                        <td className="p-2 font-mono">{s.invoiceNumber}</td>
-                        <td className="p-2">{s.customerName ?? '—'}</td>
-                        <td className="p-2 text-right">{money(s.commissionAmount)}</td>
-                        <td className="p-2">
-                          <Badge variant={s.commissionPaid ? 'default' : 'secondary'}>
-                            {s.commissionPaid ? 'Commission paid' : 'No commission'}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
             <Button onClick={commit} disabled={busy !== '' || !selectedSheets.length}>
               {busy === 'committing' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Import {selectedSheets.length > 1 ? `${selectedSheets.length} sheets` : 'report'}
