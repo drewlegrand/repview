@@ -510,13 +510,33 @@ Deno.serve(async (req) => {
         ...mapping,
         dataEndRow: Math.min(mapping.dataEndRow, grid.length - 1),
       });
+      // Header labels shown in the mapping UI. If the detected header row is
+      // blank/numeric, fall back to the best header-looking row in the sheet so
+      // the UI never degrades to "Column 1, Column 2, ...".
+      const labelRow = (() => {
+        const usable = (r: unknown[] | undefined) =>
+          (r ?? []).filter((c) => typeof c === "string" && c.trim().length > 0).length >= 2;
+        if (usable(grid[mapping.headerRow])) return grid[mapping.headerRow] ?? [];
+        let bestRow: unknown[] = [];
+        let bestScore = -1;
+        grid.slice(0, 60).forEach((r) => {
+          if (!usable(r)) return;
+          const s = scoreHeaderRow(r ?? []);
+          if (s > bestScore) {
+            bestScore = s;
+            bestRow = r ?? [];
+          }
+        });
+        return bestRow;
+      })();
+
       return json({
         sheets: allSheets,
         analyzedSheet: target,
         mapping,
         lowConfidence,
         warning,
-        headers: (grid[mapping.headerRow] ?? []).map((v) =>
+        headers: labelRow.map((v) =>
           v === null || v === undefined ? "" : String(v instanceof Date ? v.toISOString().slice(0, 10) : v),
         ),
         columnCount: Math.max(...grid.slice(0, 60).map((r) => r?.length ?? 0), 0),
