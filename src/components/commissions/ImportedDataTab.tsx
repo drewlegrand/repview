@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ChevronsUpDown, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { cn } from '@/lib/utils';
+import { saveFile } from '@/lib/download';
 import {
   ColumnFilterState,
   DateFilter,
@@ -269,14 +270,19 @@ export function ImportedDataTab() {
 
   const stamp = () => new Date().toISOString().slice(0, 10);
 
-  const exportExcel = () => {
+  const exportExcel = async () => {
     const wb = XLSX.utils.book_new();
     const sheet = buildSheet();
     XLSX.utils.book_append_sheet(wb, sheet, 'Imported data');
-    XLSX.writeFile(wb, `commission-imported-data-${stamp()}.xlsx`);
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
+    await saveFile(
+      buf,
+      `commission-imported-data-${stamp()}.xlsx`,
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
   };
 
-  const exportCsv = () => {
+  const exportCsv = async () => {
     const header = COLUMNS.map((c) => c.label);
     const body = rows.map((row) =>
       COLUMNS.map((col) => {
@@ -287,12 +293,11 @@ export function ImportedDataTab() {
       }),
     );
     const csv = XLSX.utils.sheet_to_csv(XLSX.utils.aoa_to_sheet([header, ...body]));
-    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `commission-imported-data-${stamp()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    await saveFile(
+      `\uFEFF${csv}`,
+      `commission-imported-data-${stamp()}.csv`,
+      'text/csv;charset=utf-8;',
+    );
   };
 
   return (
