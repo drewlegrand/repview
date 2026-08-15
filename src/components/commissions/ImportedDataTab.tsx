@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ChevronsUpDown, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { cn } from '@/lib/utils';
+import { saveFile } from '@/lib/download';
 import {
   ColumnFilterState,
   DateFilter,
