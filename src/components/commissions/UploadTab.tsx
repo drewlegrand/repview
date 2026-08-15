@@ -258,6 +258,36 @@ export function UploadTab() {
                   </div>
                 ))}
               </div>
+
+              <details className="rounded-md border p-2">
+                <summary className="cursor-pointer text-xs text-muted-foreground">Optional extras</summary>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {OPTIONAL_FIELDS.map((f) => (
+                    <div key={f.key} className="flex items-center gap-2">
+                      <span className="w-40 shrink-0 text-xs text-muted-foreground">{f.label}</span>
+                      <Select
+                        value={String(mapping.columns[f.key] ?? 'none')}
+                        onValueChange={(v) =>
+                          setMapping({
+                            ...mapping,
+                            columns: { ...mapping.columns, [f.key]: v === 'none' ? null : Number(v) },
+                          })
+                        }
+                      >
+                        <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">— not present —</SelectItem>
+                          {Array.from({ length: analysis.columnCount }).map((_, i) => (
+                            <SelectItem key={i} value={String(i)}>
+                              {analysis.headers[i]?.trim() ? analysis.headers[i] : `Column ${i + 1}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+              </details>
             </div>
 
             <div className="space-y-2">
