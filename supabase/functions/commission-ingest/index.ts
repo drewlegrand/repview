@@ -14,22 +14,27 @@ import {
 } from "./parse.ts";
 
 const COLUMN_KEYS = [
-  "invoiceNumber",
-  "invoiceDate",
-  "customerName",
+  "lineType",
+  "salesmanNumber",
+  "salesman",
+  "manufacturerName",
+  "manufacturerOffice",
   "customerNumber",
-  "orderReference",
+  "customerName",
+  "invoiceDate",
+  "invoiceNumber",
   "projectReference",
   "projectName",
-  "salesAmount",
-  "commissionBase",
-  "commissionRate",
-  "commissionAmount",
   "productCode",
   "productName",
   "quantity",
   "unitPrice",
-  "lineType",
+  "salesAmount",
+  "commissionRate",
+  "commissionAmount",
+  // optional extras
+  "orderReference",
+  "commissionBase",
 ] as const;
 
 const num = z.number().nullable().optional();
