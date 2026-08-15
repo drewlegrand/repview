@@ -149,6 +149,9 @@ export function UploadTab() {
       ? null
       : Math.abs((analysis.reportedTotal ?? 0) - analysis.parsedTotal) < 1;
 
+  const matchedFields = FIELDS.filter((f) => typeof mapping?.columns?.[f.key] === 'number');
+  const unmatchedFields = FIELDS.filter((f) => typeof mapping?.columns?.[f.key] !== 'number');
+
   return (
     <div className="space-y-6">
       <Card>
