@@ -175,7 +175,11 @@ function heuristicMapping(grid: unknown[][]): Mapping {
     productName: findColumn(header, ["description", "product"]),
     quantity: findColumn(header, ["qty", "quantity"]),
     unitPrice: findColumn(header, ["unit price", "price"]),
-    lineType: null,
+    lineType: findColumn(header, ["type"]),
+    salesmanNumber: findColumn(header, ["salesman no", "salesman num", "salesman ", "salesman", "rep no", "rep num"]),
+    salesman: findColumn(header, ["salesman2", "salesman name", "rep name", "salesperson", "salesman"]),
+    manufacturerName: findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]),
+    manufacturerOffice: findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]),
   };
   return clampMapping(
     {
