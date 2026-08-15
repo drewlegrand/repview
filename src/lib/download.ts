@@ -37,11 +37,27 @@ export async function saveFile(data: BlobPart, filename: string, mimeType: strin
   const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // iOS exposes the download property but frequently ignores it for blob URLs,
-    // especially inside an iframe. A normal new-tab navigation reliably opens
-    // the native document viewer, where Save to Files / Share is available.
-    anchor.target = '_blank';
-    anchor.click();
+    // Embedded iOS browsers can strip blob URLs from a new tab. Open the tab
+    // synchronously (preserving the user's click), then navigate it to a data URL.
+    const popup = window.open('', '_blank');
+    if (popup) {
+      try {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+        popup.location.href = dataUrl;
+        popup.document.title = filename;
+      } catch {
+        popup.location.href = url;
+      }
+    } else {
+      // If popups are blocked, attempt the attached-anchor path as a last resort.
+      anchor.target = '_blank';
+      anchor.click();
+    }
   } else {
     anchor.download = filename;
     anchor.click();
