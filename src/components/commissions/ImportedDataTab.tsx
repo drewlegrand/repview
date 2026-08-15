@@ -113,24 +113,24 @@ export function ImportedDataTab() {
           </div>
 
           <div className="overflow-x-auto rounded-md border">
-            <table className="w-full text-sm">
+            <table className="table-auto whitespace-nowrap text-sm">
               <thead className="bg-muted/50 text-xs text-muted-foreground">
                 <tr>
-                  <th className="p-2 text-left">Date</th>
-                  <th className="p-2 text-left">Manufacturer</th>
-                  <th className="p-2 text-left">Manufacturer Office</th>
-                  <th className="p-2 text-left">Customer #</th>
-                  <th className="p-2 text-left">Customer Name</th>
-                  <th className="p-2 text-left">Invoice</th>
-                  <th className="p-2 text-left">Project #</th>
-                  <th className="p-2 text-left">Project Name</th>
-                  <th className="p-2 text-left">Product #</th>
-                  <th className="p-2 text-left">Product Name</th>
-                  <th className="p-2 text-right">Qty</th>
-                  <th className="p-2 text-right">Unit Price</th>
-                  <th className="p-2 text-right">Sales Amount</th>
-                  <th className="p-2 text-right">Commission Rate</th>
-                  <th className="p-2 text-right">Commission Amount</th>
+                  <th className="p-2 text-left whitespace-nowrap">Date</th>
+                  <th className="p-2 text-left whitespace-nowrap">Manufacturer</th>
+                  <th className="p-2 text-left whitespace-nowrap">Manufacturer Office</th>
+                  <th className="p-2 text-left whitespace-nowrap">Customer #</th>
+                  <th className="p-2 text-left whitespace-nowrap">Customer Name</th>
+                  <th className="p-2 text-left whitespace-nowrap">Invoice</th>
+                  <th className="p-2 text-left whitespace-nowrap">Project #</th>
+                  <th className="p-2 text-left whitespace-nowrap">Project Name</th>
+                  <th className="p-2 text-left whitespace-nowrap">Product #</th>
+                  <th className="p-2 text-left whitespace-nowrap">Product Name</th>
+                  <th className="p-2 text-right whitespace-nowrap">Qty</th>
+                  <th className="p-2 text-right whitespace-nowrap">Unit Price</th>
+                  <th className="p-2 text-right whitespace-nowrap">Sales Amount</th>
+                  <th className="p-2 text-right whitespace-nowrap">Commission Rate</th>
+                  <th className="p-2 text-right whitespace-nowrap">Commission Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,27 +147,27 @@ export function ImportedDataTab() {
                     const line = r.kind === 'line' ? r.line : null;
                     return (
                       <tr key={`${inv.id}-${idx}`} className="border-t">
-                        <td className="p-2">{formatDate(inv.invoice_date)}</td>
-                        <td className="p-2">{inv.manufacturer_name ?? '—'}</td>
-                        <td className="p-2">{inv.manufacturer_office ?? '—'}</td>
-                        <td className="p-2">{inv.customer_number ?? '—'}</td>
-                        <td className="p-2">{inv.customer_name ?? '—'}</td>
-                        <td className="p-2 font-mono">{inv.invoice_number}</td>
-                        <td className="p-2">{inv.project_reference ?? '—'}</td>
-                        <td className="p-2">{inv.project_name ?? '—'}</td>
-                        <td className="p-2">{line ? line.product_code ?? '—' : '—'}</td>
-                        <td className="p-2">{line ? line.product_name ?? '—' : '—'}</td>
-                        <td className="p-2 text-right">{line ? line.quantity ?? '—' : '—'}</td>
-                        <td className="p-2 text-right">
+                        <td className="p-2 whitespace-nowrap">{formatDate(inv.invoice_date)}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.manufacturer_name ?? '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.manufacturer_office ?? '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.customer_number ?? '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.customer_name ?? '—'}</td>
+                        <td className="p-2 font-mono whitespace-nowrap">{inv.invoice_number}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.project_reference ?? '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{inv.project_name ?? '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{line ? line.product_code ?? '—' : '—'}</td>
+                        <td className="p-2 whitespace-nowrap">{line ? line.product_name ?? '—' : '—'}</td>
+                        <td className="p-2 text-right whitespace-nowrap">{line ? line.quantity ?? '—' : '—'}</td>
+                        <td className="p-2 text-right whitespace-nowrap">
                           {line ? money(line.unit_price) : '—'}
                         </td>
-                        <td className="p-2 text-right">
+                        <td className="p-2 text-right whitespace-nowrap">
                           {line ? money(line.sales_amount) : money(inv.sales_amount)}
                         </td>
-                        <td className="p-2 text-right">
+                        <td className="p-2 text-right whitespace-nowrap">
                           {line ? pct(line.commission_rate) : pct(inv.commission_rate)}
                         </td>
-                        <td className="p-2 text-right">
+                        <td className="p-2 text-right whitespace-nowrap">
                           {line ? money(line.commission_amount) : money(inv.commission_amount)}
                         </td>
                       </tr>
@@ -184,12 +184,12 @@ export function ImportedDataTab() {
               {!isLoading && rows.length > 0 && (
                 <tfoot className="bg-muted/50 text-xs font-medium">
                   <tr>
-                    <td colSpan={12} className="p-2 text-right">
+                    <td colSpan={12} className="p-2 text-right whitespace-nowrap">
                       {rows.length} row{rows.length === 1 ? '' : 's'}
                     </td>
-                    <td className="p-2 text-right">{money(totals.sales)}</td>
-                    <td className="p-2 text-right" />
-                    <td className="p-2 text-right">{money(totals.commission)}</td>
+                    <td className="p-2 text-right whitespace-nowrap">{money(totals.sales)}</td>
+                    <td className="p-2 text-right whitespace-nowrap" />
+                    <td className="p-2 text-right whitespace-nowrap">{money(totals.commission)}</td>
                   </tr>
                 </tfoot>
               )}
