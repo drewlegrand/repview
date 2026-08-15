@@ -243,16 +243,35 @@ export function UploadTab() {
             )}
 
             <div className="space-y-2">
-              <div className="text-sm font-medium">Column mapping</div>
-              <div className="flex items-center gap-2 rounded-md border border-dashed p-2">
-                <span className="w-40 shrink-0 text-xs text-muted-foreground">Manufacturer</span>
-                <span className="text-xs">
-                  <Badge variant="secondary">{manufacturer?.name ?? '—'}</Badge>
-                  <span className="ml-2 text-muted-foreground">set automatically from the manufacturer you selected</span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-sm font-medium">Column mapping</div>
+                {(matchedFields.length > 0 || usedSavedProfile) && (
+                  <Button variant="ghost" size="sm" onClick={() => setShowAllMappings((v) => !v)}>
+                    {showAllMappings ? 'Hide matched columns' : 'Edit mapping'}
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 rounded-md border p-3 text-sm">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <span>
+                  {usedSavedProfile
+                    ? `Using the saved ${manufacturer?.name ?? ''} layout — ${matchedFields.length} of ${FIELDS.length} columns mapped.`
+                    : `${matchedFields.length} of ${FIELDS.length} columns matched automatically.`}
+                </span>
+                <span className="text-muted-foreground">
+                  Manufacturer is set to <Badge variant="secondary">{manufacturer?.name ?? '—'}</Badge> automatically.
                 </span>
               </div>
+
+              {unmatchedFields.length > 0 && !showAllMappings && (
+                <div className="text-xs text-muted-foreground">
+                  {unmatchedFields.length} column{unmatchedFields.length === 1 ? '' : 's'} still need a match:
+                </div>
+              )}
+
               <div className="grid gap-2 sm:grid-cols-2">
-                {FIELDS.map((f) => (
+                {(showAllMappings ? FIELDS : unmatchedFields).map((f) => (
                   <div key={f.key} className="flex items-center gap-2">
                     <span className="w-40 shrink-0 text-xs text-muted-foreground">{f.label}</span>
                     <Select
