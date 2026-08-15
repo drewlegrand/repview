@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type Manufacturer = {
@@ -148,3 +148,37 @@ export const money = (n: number | null | undefined) =>
 
 export const pct = (n: number | null | undefined) =>
   n === null || n === undefined ? '—' : `${(n * 100).toFixed(2)}%`;
+export function useIsAdmin() {
+  return useQuery({
+    queryKey: ['is_admin'],
+    queryFn: async (): Promise<boolean> => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes.user?.id;
+      if (!userId) return false;
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      if (error) return false;
+      return !!data;
+    },
+  });
+}
+
+export function useDeleteReport() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (reportId: string) => {
+      const { data, error } = await supabase.rpc('delete_commission_report', { _report_id: reportId });
+      if (error) throw error;
+      return data as { deleted_invoices?: number } | null;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['commission_reports'] });
+      qc.invalidateQueries({ queryKey: ['commission_invoices'] });
+      qc.invalidateQueries({ queryKey: ['commission_history'] });
+    },
+  });
+}

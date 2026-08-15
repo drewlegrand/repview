@@ -1,15 +1,38 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { money, useHistory, useReports } from '@/hooks/useCommissions';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { money, useDeleteReport, useHistory, useIsAdmin, useReports } from '@/hooks/useCommissions';
 
 export function HistoryTab() {
   const { data: history = [] } = useHistory();
   const { data: reports = [] } = useReports();
+  const { data: isAdmin = false } = useIsAdmin();
+  const deleteReport = useDeleteReport();
 
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader><CardTitle>Imported reports</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Imported reports</CardTitle>
+          {isAdmin && (
+            <CardDescription>
+              As an administrator you can delete an import and the invoice data it created.
+            </CardDescription>
+          )}
+        </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-xs text-muted-foreground">
@@ -18,6 +41,7 @@ export function HistoryTab() {
                 <th className="p-2 text-right">New</th><th className="p-2 text-right">Changed</th>
                 <th className="p-2 text-right">Unchanged</th><th className="p-2 text-right">Commission</th>
                 <th className="p-2 text-left">Ties out</th>
+                {isAdmin && <th className="p-2 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -38,9 +62,48 @@ export function HistoryTab() {
                       </Badge>
                     )}
                   </td>
+                  {isAdmin && (
+                    <td className="p-2 text-right">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" aria-label={`Delete import ${String(r.file_name)}`}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete this import?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {String(r.file_name)} will be removed, along with its audit entries and any
+                              invoices that came only from this report. Invoices also seen on other reports
+                              are kept. This cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              disabled={deleteReport.isPending}
+                              onClick={() =>
+                                deleteReport.mutate(String(r.id), {
+                                  onSuccess: (res) =>
+                                    toast.success(
+                                      `Import deleted — ${res?.deleted_invoices ?? 0} invoices removed`,
+                                    ),
+                                  onError: (e: unknown) =>
+                                    toast.error(e instanceof Error ? e.message : 'Could not delete import'),
+                                })
+                              }
+                            >
+                              Delete import
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </td>
+                  )}
                 </tr>
               ))}
-              {!reports.length && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">No imports yet.</td></tr>}
+              {!reports.length && <tr><td colSpan={isAdmin ? 8 : 7} className="p-6 text-center text-muted-foreground">No imports yet.</td></tr>}
             </tbody>
           </table>
         </CardContent>
