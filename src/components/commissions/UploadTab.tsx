@@ -27,7 +27,6 @@ const FIELDS: Array<{ key: string; label: string }> = [
   { key: 'lineType', label: 'Type' },
   { key: 'salesmanNumber', label: 'Salesman #' },
   { key: 'salesman', label: 'Salesman' },
-  { key: 'manufacturerName', label: 'Manufacturer' },
   { key: 'manufacturerOffice', label: 'Manufacturer Office' },
   { key: 'customerNumber', label: 'Customer #' },
   { key: 'customerName', label: 'Customer Name' },
@@ -232,6 +231,13 @@ export function UploadTab() {
 
             <div className="space-y-2">
               <div className="text-sm font-medium">Column mapping</div>
+              <div className="flex items-center gap-2 rounded-md border border-dashed p-2">
+                <span className="w-40 shrink-0 text-xs text-muted-foreground">Manufacturer</span>
+                <span className="text-xs">
+                  <Badge variant="secondary">{manufacturer?.name ?? '—'}</Badge>
+                  <span className="ml-2 text-muted-foreground">set automatically from the manufacturer you selected</span>
+                </span>
+              </div>
               <div className="grid gap-2 sm:grid-cols-2">
                 {FIELDS.map((f) => (
                   <div key={f.key} className="flex items-center gap-2">
