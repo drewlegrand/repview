@@ -349,23 +349,31 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   fill("manufacturerName", findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]));
   fill("manufacturerOffice", findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]));
 
-  // Last resort: if there is still no commission column, look for a numeric
-  // column whose total matches base x rate.
-  if (columns.commissionAmount === null || columns.commissionAmount === undefined) {
+  // Numeric sanity check: the commission column's total must be close to
+  // base x rate. If it is missing OR way off (e.g. it points at the rate
+  // column), find the numeric column whose total matches.
+  {
     const width = Math.max(...grid.map((r) => r?.length ?? 0), 0);
     const rows = grid.slice(m.dataStartRow, m.dataEndRow + 1);
     const sumOf = (ci: number) =>
       rows.reduce((s, r) => s + (toNumber(r?.[ci]) ?? 0), 0);
+    const baseCol = (columns.commissionBase ?? columns.salesAmount) as number | null | undefined;
     const expected = rows.reduce((s, r) => {
-      const base = toNumber(r?.[columns.commissionBase as number]) ?? 0;
+      const base = toNumber(r?.[baseCol as number]) ?? 0;
       const rate = toNumber(r?.[columns.commissionRate as number]) ?? 0;
       return s + base * rate;
     }, 0);
-    if (Math.abs(expected) > 0.01) {
+    const currentCol = columns.commissionAmount;
+    const currentSum =
+      currentCol === null || currentCol === undefined ? null : sumOf(currentCol);
+    const tolerance = Math.max(1, Math.abs(expected) * 0.05);
+    const needsFix =
+      currentSum === null || Math.abs(currentSum - expected) > tolerance;
+    if (Math.abs(expected) > 0.01 && needsFix) {
       let bestCol: number | null = null;
       let bestDelta = Infinity;
       for (let ci = 0; ci < width; ci++) {
-        if (taken.has(ci)) continue;
+        if (ci === baseCol || ci === columns.commissionRate) continue;
         const delta = Math.abs(sumOf(ci) - expected);
         if (delta < bestDelta) {
           bestDelta = delta;
