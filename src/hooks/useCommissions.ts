@@ -19,6 +19,23 @@ export type MappingProfile = {
   columns: ColumnMap;
 };
 
+export type CommissionInvoiceLine = {
+  id: string;
+  invoice_id: string;
+  report_id: string | null;
+  line_type: string | null;
+  salesman_number: string | null;
+  salesman: string | null;
+  product_code: string | null;
+  product_name: string | null;
+  quantity: number | null;
+  unit_price: number | null;
+  sales_amount: number | null;
+  commission_rate: number | null;
+  commission_amount: number | null;
+  created_at: string;
+};
+
 export type CommissionInvoice = {
   id: string;
   manufacturer_id: string;
@@ -27,10 +44,16 @@ export type CommissionInvoice = {
   document_type: string;
   invoice_date: string | null;
   period_label: string | null;
+  customer_number: string | null;
   customer_name: string | null;
   order_reference: string | null;
   project_reference: string | null;
   project_name: string | null;
+  line_type: string | null;
+  salesman_number: string | null;
+  salesman: string | null;
+  manufacturer_name: string | null;
+  manufacturer_office: string | null;
   sales_amount: number;
   commission_base: number;
   commission_rate: number | null;
@@ -39,6 +62,7 @@ export type CommissionInvoice = {
   marked_received: boolean;
   marked_received_at: string | null;
   discrepancy_note: string | null;
+  commission_invoice_lines?: CommissionInvoiceLine[];
 };
 
 export type TrackedOrder = {
