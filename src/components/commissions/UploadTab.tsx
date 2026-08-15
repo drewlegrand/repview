@@ -43,10 +43,6 @@ const FIELDS: Array<{ key: string; label: string }> = [
   { key: 'commissionAmount', label: 'Commission Amount' },
 ];
 
-const OPTIONAL_FIELDS: Array<{ key: string; label: string }> = [
-  { key: 'orderReference', label: 'Order / job reference' },
-  { key: 'commissionBase', label: 'Commission base (taxable)' },
-];
 
 export function UploadTab() {
   const qc = useQueryClient();
