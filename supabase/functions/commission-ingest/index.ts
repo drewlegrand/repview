@@ -155,6 +155,36 @@ function findColumnRe(header: unknown[], re: RegExp): number | null {
   return null;
 }
 
+/**
+ * Scored header match. `include` patterns add points, `exclude` patterns
+ * disqualify a column outright. This prevents "Commission Rate" from winning
+ * the commission-amount slot just because it appears first.
+ */
+function findColumnScored(
+  header: unknown[],
+  include: string[],
+  exclude: string[] = [],
+): number | null {
+  let bestIdx: number | null = null;
+  let bestScore = 0;
+  for (let i = 0; i < header.length; i++) {
+    const cellValue = header[i];
+    if (typeof cellValue !== "string") continue;
+    const v = cellValue.toLowerCase().replace(/[^a-z0-9%]+/g, " ").trim();
+    if (!v) continue;
+    if (exclude.some((p) => v.includes(p))) continue;
+    let score = 0;
+    include.forEach((p, rank) => {
+      if (v.includes(p)) score = Math.max(score, include.length - rank);
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
+}
+
 /** Salesman # vs. Salesman name live in adjacent, similarly-named columns. */
 function salesmanColumns(header: unknown[]): { number: number | null; name: number | null } {
   const num =
