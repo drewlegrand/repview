@@ -122,6 +122,20 @@ export function useCommissionInvoices() {
   });
 }
 
+export function useCommissionInvoicesWithLines() {
+  return useQuery({
+    queryKey: ['commission_invoices_with_lines'],
+    queryFn: async (): Promise<CommissionInvoice[]> => {
+      const { data, error } = await supabase
+        .from('commission_invoices')
+        .select('*, commission_invoice_lines(*)')
+        .order('invoice_date', { ascending: false, nullsFirst: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as CommissionInvoice[];
+    },
+  });
+}
+
 export function useTrackedOrders() {
   return useQuery({
     queryKey: ['tracked_orders'],
