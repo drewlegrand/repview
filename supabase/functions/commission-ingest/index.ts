@@ -322,6 +322,13 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
     }
   }
 
+  if (
+    columns.manufacturerName !== null && columns.manufacturerName !== undefined &&
+    columns.manufacturerName === columns.manufacturerOffice
+  ) {
+    columns.manufacturerOffice = null;
+  }
+
   return { ...m, columns };
 }
 
@@ -342,7 +349,7 @@ async function callDetect(
     "Use null for any field the sheet does not have. commissionBase is a separate commissionable-amount column when present (distinct from total sales amount).",
     "Answer with a SINGLE FLAT object. Every column field is a top-level key holding a 0-based column index or null.",
     strict
-      ? 'Respond exactly in this shape (no nesting): {"headerRow":0,"dataStartRow":1,"dataEndRow":50,"grain":"invoice","periodLabel":null,"invoiceNumber":0,"invoiceDate":1,"customerName":2,"customerNumber":null,"orderReference":null,"projectReference":null,"projectName":null,"salesAmount":5,"commissionBase":null,"commissionRate":6,"commissionAmount":7,"productCode":null,"productName":null,"quantity":null,"unitPrice":null,"lineType":null}'
+      ? 'Respond exactly in this shape (no nesting): {"headerRow":0,"dataStartRow":1,"dataEndRow":50,"grain":"invoice","periodLabel":null,"lineType":null,"salesmanNumber":null,"salesman":null,"manufacturerName":null,"manufacturerOffice":null,"customerNumber":null,"customerName":2,"invoiceDate":1,"invoiceNumber":0,"projectReference":null,"projectName":null,"productCode":null,"productName":null,"quantity":null,"unitPrice":null,"salesAmount":5,"commissionRate":6,"commissionAmount":7,"orderReference":null,"commissionBase":null}'
       : "",
     "",
     preview(grid),
