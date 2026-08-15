@@ -8,7 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { money, pct, useCommissionInvoicesWithLines, useManufacturers } from '@/hooks/useCommissions';
+import {
+  CommissionInvoiceLine,
+  money,
+  pct,
+  useCommissionInvoicesWithLines,
+  useManufacturers,
+} from '@/hooks/useCommissions';
 
 function formatDate(value: string | null | undefined) {
   if (!value) return '—';
@@ -47,7 +53,7 @@ export function ImportedDataTab() {
   const rows = useMemo(() => {
     const out: Array<
       | { kind: 'invoice'; inv: (typeof filtered)[number] }
-      | { kind: 'line'; inv: (typeof filtered)[number]; line: NonNullable<(typeof inv)['commission_invoice_lines']>[number] }
+      | { kind: 'line'; inv: (typeof filtered)[number]; line: CommissionInvoiceLine }
     > = [];
     for (const inv of filtered) {
       const lines = inv.commission_invoice_lines;
