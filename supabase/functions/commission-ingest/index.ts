@@ -14,22 +14,27 @@ import {
 } from "./parse.ts";
 
 const COLUMN_KEYS = [
-  "invoiceNumber",
-  "invoiceDate",
-  "customerName",
+  "lineType",
+  "salesmanNumber",
+  "salesman",
+  "manufacturerName",
+  "manufacturerOffice",
   "customerNumber",
-  "orderReference",
+  "customerName",
+  "invoiceDate",
+  "invoiceNumber",
   "projectReference",
   "projectName",
-  "salesAmount",
-  "commissionBase",
-  "commissionRate",
-  "commissionAmount",
   "productCode",
   "productName",
   "quantity",
   "unitPrice",
-  "lineType",
+  "salesAmount",
+  "commissionRate",
+  "commissionAmount",
+  // optional extras
+  "orderReference",
+  "commissionBase",
 ] as const;
 
 const num = z.number().nullable().optional();
@@ -141,6 +146,26 @@ function findColumn(header: unknown[], patterns: string[]): number | null {
   return null;
 }
 
+function findColumnRe(header: unknown[], re: RegExp): number | null {
+  for (let i = 0; i < header.length; i++) {
+    const cell = header[i];
+    if (typeof cell !== "string") continue;
+    if (re.test(cell.trim())) return i;
+  }
+  return null;
+}
+
+/** Salesman # vs. Salesman name live in adjacent, similarly-named columns. */
+function salesmanColumns(header: unknown[]): { number: number | null; name: number | null } {
+  const num =
+    findColumnRe(header, /^salesman\s*#$/i) ??
+    findColumn(header, ["salesman no", "salesman num", "salesman id", "rep no", "rep num", "rep id"]);
+  const name =
+    findColumnRe(header, /^(salesman\s*2|salesman(\s*name)?|salesperson|rep\s*name)$/i) ??
+    findColumn(header, ["salesman2", "salesman name", "rep name", "salesperson"]);
+  return { number: num, name: name === num ? null : name };
+}
+
 /** Deterministic fallback used when the model can't produce a usable mapping. */
 function heuristicMapping(grid: unknown[][]): Mapping {
   let headerRow = 0;
@@ -170,7 +195,11 @@ function heuristicMapping(grid: unknown[][]): Mapping {
     productName: findColumn(header, ["description", "product"]),
     quantity: findColumn(header, ["qty", "quantity"]),
     unitPrice: findColumn(header, ["unit price", "price"]),
-    lineType: null,
+    lineType: findColumn(header, ["type"]),
+    salesmanNumber: salesmanColumns(header).number,
+    salesman: salesmanColumns(header).name,
+    manufacturerName: findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]),
+    manufacturerOffice: findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]),
   };
   return clampMapping(
     {
@@ -252,6 +281,18 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   claim("commissionBase", byLabel.commissionBase !== null);
   claim("salesAmount", byLabel.salesAmount !== null);
 
+  // Text columns the model often skips: fill in from header labels when absent.
+  const sm = salesmanColumns(header);
+  const fill = (key: keyof Mapping["columns"], found: number | null) => {
+    const current = columns[key];
+    if ((current === null || current === undefined) && found !== null) columns[key] = found;
+  };
+  fill("lineType", findColumnRe(header, /^type$/i) ?? findColumn(header, ["line type", "doc type", "type"]));
+  fill("salesmanNumber", sm.number);
+  fill("salesman", sm.name);
+  fill("manufacturerName", findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]));
+  fill("manufacturerOffice", findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]));
+
   // Last resort: if there is still no commission column, look for a numeric
   // column whose total matches base x rate.
   if (columns.commissionAmount === null || columns.commissionAmount === undefined) {
@@ -281,6 +322,13 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
     }
   }
 
+  if (
+    columns.manufacturerName !== null && columns.manufacturerName !== undefined &&
+    columns.manufacturerName === columns.manufacturerOffice
+  ) {
+    columns.manufacturerOffice = null;
+  }
+
   return { ...m, columns };
 }
 
@@ -301,7 +349,7 @@ async function callDetect(
     "Use null for any field the sheet does not have. commissionBase is a separate commissionable-amount column when present (distinct from total sales amount).",
     "Answer with a SINGLE FLAT object. Every column field is a top-level key holding a 0-based column index or null.",
     strict
-      ? 'Respond exactly in this shape (no nesting): {"headerRow":0,"dataStartRow":1,"dataEndRow":50,"grain":"invoice","periodLabel":null,"invoiceNumber":0,"invoiceDate":1,"customerName":2,"customerNumber":null,"orderReference":null,"projectReference":null,"projectName":null,"salesAmount":5,"commissionBase":null,"commissionRate":6,"commissionAmount":7,"productCode":null,"productName":null,"quantity":null,"unitPrice":null,"lineType":null}'
+      ? 'Respond exactly in this shape (no nesting): {"headerRow":0,"dataStartRow":1,"dataEndRow":50,"grain":"invoice","periodLabel":null,"lineType":null,"salesmanNumber":null,"salesman":null,"manufacturerName":null,"manufacturerOffice":null,"customerNumber":null,"customerName":2,"invoiceDate":1,"invoiceNumber":0,"projectReference":null,"projectName":null,"productCode":null,"productName":null,"quantity":null,"unitPrice":null,"salesAmount":5,"commissionRate":6,"commissionAmount":7,"orderReference":null,"commissionBase":null}'
       : "",
     "",
     preview(grid),
@@ -519,6 +567,11 @@ async function reconcile(
       invoice_number: inv.invoiceNumber,
       invoice_number_norm: inv.invoiceNumberNorm,
       document_type: inv.documentType,
+      line_type: inv.lineType,
+      salesman_number: inv.salesmanNumber,
+      salesman: inv.salesman,
+      manufacturer_name: inv.manufacturerName,
+      manufacturer_office: inv.manufacturerOffice,
       invoice_date: inv.invoiceDate,
       period_label: mapping.periodLabel,
       customer_name: inv.customerName,
@@ -602,6 +655,8 @@ async function reconcile(
           invoice_id: invoiceId,
           report_id: reportId,
           line_type: l.lineType,
+          salesman_number: l.salesmanNumber,
+          salesman: l.salesman,
           product_code: l.productCode,
           product_name: l.productName,
           quantity: l.quantity,

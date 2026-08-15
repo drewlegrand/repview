@@ -24,22 +24,29 @@ type AnalyzeResult = {
 };
 
 const FIELDS: Array<{ key: string; label: string }> = [
-  { key: 'invoiceNumber', label: 'Invoice / document #' },
-  { key: 'invoiceDate', label: 'Invoice date' },
-  { key: 'customerName', label: 'Customer name' },
+  { key: 'lineType', label: 'Type' },
+  { key: 'salesmanNumber', label: 'Salesman #' },
+  { key: 'salesman', label: 'Salesman' },
+  { key: 'manufacturerName', label: 'Manufacturer' },
+  { key: 'manufacturerOffice', label: 'Manufacturer Office' },
   { key: 'customerNumber', label: 'Customer #' },
-  { key: 'orderReference', label: 'Order reference' },
+  { key: 'customerName', label: 'Customer Name' },
+  { key: 'invoiceDate', label: 'Date' },
+  { key: 'invoiceNumber', label: 'Invoice' },
   { key: 'projectReference', label: 'Project #' },
-  { key: 'projectName', label: 'Project name' },
-  { key: 'salesAmount', label: 'Sales amount' },
-  { key: 'commissionBase', label: 'Commission base' },
-  { key: 'commissionRate', label: 'Commission rate' },
-  { key: 'commissionAmount', label: 'Commission amount' },
-  { key: 'productCode', label: 'Product code' },
-  { key: 'productName', label: 'Product name' },
-  { key: 'quantity', label: 'Quantity' },
-  { key: 'unitPrice', label: 'Unit price' },
-  { key: 'lineType', label: 'Line type' },
+  { key: 'projectName', label: 'Project Name' },
+  { key: 'productCode', label: 'Product #' },
+  { key: 'productName', label: 'Product Name' },
+  { key: 'quantity', label: 'Qty' },
+  { key: 'unitPrice', label: 'Unit Price' },
+  { key: 'salesAmount', label: 'Sales Amount' },
+  { key: 'commissionRate', label: 'Commission Rate' },
+  { key: 'commissionAmount', label: 'Commission Amount' },
+];
+
+const OPTIONAL_FIELDS: Array<{ key: string; label: string }> = [
+  { key: 'orderReference', label: 'Order / job reference' },
+  { key: 'commissionBase', label: 'Commission base (taxable)' },
 ];
 
 export function UploadTab() {
@@ -251,6 +258,36 @@ export function UploadTab() {
                   </div>
                 ))}
               </div>
+
+              <details className="rounded-md border p-2">
+                <summary className="cursor-pointer text-xs text-muted-foreground">Optional extras</summary>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {OPTIONAL_FIELDS.map((f) => (
+                    <div key={f.key} className="flex items-center gap-2">
+                      <span className="w-40 shrink-0 text-xs text-muted-foreground">{f.label}</span>
+                      <Select
+                        value={String(mapping.columns[f.key] ?? 'none')}
+                        onValueChange={(v) =>
+                          setMapping({
+                            ...mapping,
+                            columns: { ...mapping.columns, [f.key]: v === 'none' ? null : Number(v) },
+                          })
+                        }
+                      >
+                        <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">— not present —</SelectItem>
+                          {Array.from({ length: analysis.columnCount }).map((_, i) => (
+                            <SelectItem key={i} value={String(i)}>
+                              {analysis.headers[i]?.trim() ? analysis.headers[i] : `Column ${i + 1}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+              </details>
             </div>
 
             <div className="space-y-2">

@@ -3,6 +3,11 @@
 
 export type ColumnMap = {
   invoiceNumber: number;
+  lineType?: number | null;
+  salesmanNumber?: number | null;
+  salesman?: number | null;
+  manufacturerName?: number | null;
+  manufacturerOffice?: number | null;
   invoiceDate?: number | null;
   customerName?: number | null;
   customerNumber?: number | null;
@@ -17,7 +22,6 @@ export type ColumnMap = {
   productName?: number | null;
   quantity?: number | null;
   unitPrice?: number | null;
-  lineType?: number | null;
 };
 
 export type Mapping = {
@@ -31,6 +35,8 @@ export type Mapping = {
 
 export type ParsedLine = {
   lineType: string | null;
+  salesmanNumber: string | null;
+  salesman: string | null;
   productCode: string | null;
   productName: string | null;
   quantity: number | null;
@@ -44,6 +50,11 @@ export type ParsedInvoice = {
   invoiceNumber: string;
   invoiceNumberNorm: string;
   documentType: "invoice" | "credit_memo";
+  lineType: string | null;
+  salesmanNumber: string | null;
+  salesman: string | null;
+  manufacturerName: string | null;
+  manufacturerOffice: string | null;
   invoiceDate: string | null;
   customerName: string | null;
   customerNumber: string | null;
@@ -155,6 +166,8 @@ export function parseGrid(grid: unknown[][], mapping: Mapping) {
 
     const line: ParsedLine = {
       lineType: toText(cell(row, c.lineType)),
+      salesmanNumber: toText(cell(row, c.salesmanNumber)),
+      salesman: toText(cell(row, c.salesman)),
       productCode: toText(cell(row, c.productCode)),
       productName: toText(cell(row, c.productName)),
       quantity: toNumber(cell(row, c.quantity)),
@@ -182,6 +195,11 @@ export function parseGrid(grid: unknown[][], mapping: Mapping) {
       invoiceNumber,
       invoiceNumberNorm: norm,
       documentType: sales < 0 || /CM|CREDIT/i.test(invoiceNumber) ? "credit_memo" : "invoice",
+      lineType: toText(cell(row, c.lineType)),
+      salesmanNumber: toText(cell(row, c.salesmanNumber)),
+      salesman: toText(cell(row, c.salesman)),
+      manufacturerName: toText(cell(row, c.manufacturerName)),
+      manufacturerOffice: toText(cell(row, c.manufacturerOffice)),
       invoiceDate: toDate(cell(row, c.invoiceDate)),
       customerName: toText(cell(row, c.customerName)),
       customerNumber: toText(cell(row, c.customerNumber)),

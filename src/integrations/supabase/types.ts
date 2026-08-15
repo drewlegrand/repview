@@ -81,6 +81,8 @@ export type Database = {
           quantity: number | null
           report_id: string | null
           sales_amount: number | null
+          salesman: string | null
+          salesman_number: string | null
           unit_price: number | null
           user_id: string
         }
@@ -96,6 +98,8 @@ export type Database = {
           quantity?: number | null
           report_id?: string | null
           sales_amount?: number | null
+          salesman?: string | null
+          salesman_number?: string | null
           unit_price?: number | null
           user_id: string
         }
@@ -111,6 +115,8 @@ export type Database = {
           quantity?: number | null
           report_id?: string | null
           sales_amount?: number | null
+          salesman?: string | null
+          salesman_number?: string | null
           unit_price?: number | null
           user_id?: string
         }
@@ -148,7 +154,10 @@ export type Database = {
           invoice_number: string
           invoice_number_norm: string
           last_report_id: string | null
+          line_type: string | null
           manufacturer_id: string
+          manufacturer_name: string | null
+          manufacturer_office: string | null
           marked_received: boolean
           marked_received_at: string | null
           order_reference: string | null
@@ -157,6 +166,8 @@ export type Database = {
           project_reference: string | null
           raw: Json | null
           sales_amount: number
+          salesman: string | null
+          salesman_number: string | null
           updated_at: string
           user_id: string
         }
@@ -176,7 +187,10 @@ export type Database = {
           invoice_number: string
           invoice_number_norm: string
           last_report_id?: string | null
+          line_type?: string | null
           manufacturer_id: string
+          manufacturer_name?: string | null
+          manufacturer_office?: string | null
           marked_received?: boolean
           marked_received_at?: string | null
           order_reference?: string | null
@@ -185,6 +199,8 @@ export type Database = {
           project_reference?: string | null
           raw?: Json | null
           sales_amount?: number
+          salesman?: string | null
+          salesman_number?: string | null
           updated_at?: string
           user_id: string
         }
@@ -204,7 +220,10 @@ export type Database = {
           invoice_number?: string
           invoice_number_norm?: string
           last_report_id?: string | null
+          line_type?: string | null
           manufacturer_id?: string
+          manufacturer_name?: string | null
+          manufacturer_office?: string | null
           marked_received?: boolean
           marked_received_at?: string | null
           order_reference?: string | null
@@ -213,6 +232,8 @@ export type Database = {
           project_reference?: string | null
           raw?: Json | null
           sales_amount?: number
+          salesman?: string | null
+          salesman_number?: string | null
           updated_at?: string
           user_id?: string
         }
