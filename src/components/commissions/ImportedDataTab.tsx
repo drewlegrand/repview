@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
+  ColumnFilterState,
+  DateFilter,
+  EMPTY_FILTER,
+  ValueFilter,
+  isFilterActive,
+} from './ColumnFilter';
+import {
   money,
   pct,
   useCommissionInvoicesWithLines,
@@ -15,6 +22,15 @@ function formatDate(value: string | null | undefined) {
   if (!value) return '—';
   const d = new Date(value);
   return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleDateString();
+}
+
+function dayKeyOf(value: string | null | undefined) {
+  if (!value) return '(blank)';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '(blank)';
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
 }
 
 type ColumnKey =
@@ -57,6 +73,7 @@ const COLUMNS: Array<{ key: ColumnKey; label: string; type: ColumnType }> = [
 type Row = {
   id: string;
   manufacturerId: string | null;
+  dayKey: string;
   values: Record<ColumnKey, string | number | null>;
   display: Record<ColumnKey, string>;
 };
@@ -66,8 +83,9 @@ export function ImportedDataTab() {
   const { data: manufacturers = [] } = useManufacturers();
   const [search, setSearch] = useState('');
   const [manufacturerId, setManufacturerId] = useState('all');
-  const [columnFilters, setColumnFilters] = useState<Partial<Record<ColumnKey, string>>>({});
-  const [showFilters, setShowFilters] = useState(false);
+  const [columnFilters, setColumnFilters] = useState<Partial<Record<ColumnKey, ColumnFilterState>>>(
+    {},
+  );
   const [sort, setSort] = useState<{ key: ColumnKey; dir: 'asc' | 'desc' } | null>({
     key: 'date',
     dir: 'desc',
@@ -110,7 +128,13 @@ export function ImportedDataTab() {
         commissionRate: line ? pct(line.commission_rate) : pct(inv.commission_rate),
         commissionAmount: line ? money(line.commission_amount) : money(inv.commission_amount),
       };
-      out.push({ id: `${inv.id}-${idx}`, manufacturerId: inv.manufacturer_id ?? null, values, display });
+      out.push({
+        id: `${inv.id}-${idx}`,
+        manufacturerId: inv.manufacturer_id ?? null,
+        dayKey: dayKeyOf(inv.invoice_date),
+        values,
+        display,
+      });
     };
     invoices.forEach((inv) => {
       const lines = inv.commission_invoice_lines;
@@ -122,16 +146,22 @@ export function ImportedDataTab() {
 
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
-    const activeFilters = Object.entries(columnFilters).filter(([, v]) => v && v.trim());
+    const activeFilters = Object.entries(columnFilters).filter(([, v]) => isFilterActive(v));
     const filtered = allRows.filter((row) => {
       if (manufacturerId !== 'all' && row.manufacturerId !== manufacturerId) return false;
       if (term) {
         const haystack = Object.values(row.display).join(' ').toLowerCase();
         if (!haystack.includes(term)) return false;
       }
-      for (const [key, value] of activeFilters) {
-        const cell = row.display[key as ColumnKey] ?? '';
-        if (!cell.toLowerCase().includes(value!.trim().toLowerCase())) return false;
+      for (const [key, state] of activeFilters) {
+        const col = key as ColumnKey;
+        const cell = row.display[col] ?? '';
+        const text = state!.text.trim().toLowerCase();
+        if (text && !cell.toLowerCase().includes(text)) return false;
+        if (state!.selected) {
+          const value = col === 'date' ? row.dayKey : cell;
+          if (!state!.selected.includes(value)) return false;
+        }
       }
       return true;
     });
@@ -157,6 +187,26 @@ export function ImportedDataTab() {
       prev?.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' },
     );
   };
+
+  const optionsByColumn = useMemo(() => {
+    const map = {} as Record<ColumnKey, string[]>;
+    for (const col of COLUMNS) {
+      const seen = new Set<string>();
+      for (const row of allRows) seen.add(col.key === 'date' ? row.dayKey : row.display[col.key]);
+      const list = Array.from(seen);
+      map[col.key] =
+        col.type === 'number'
+          ? list.sort((a, b) =>
+              a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+            )
+          : list.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+    }
+    return map;
+  }, [allRows]);
+
+  const filterFor = (key: ColumnKey) => columnFilters[key] ?? EMPTY_FILTER;
+  const setFilter = (key: ColumnKey, next: ColumnFilterState) =>
+    setColumnFilters((prev) => ({ ...prev, [key]: next }));
 
   const totals = useMemo(() => {
     return rows.reduce(
@@ -204,15 +254,9 @@ export function ImportedDataTab() {
                 </option>
               ))}
             </select>
-            <Button
-              variant={showFilters ? 'secondary' : 'outline'}
-              onClick={() => setShowFilters((v) => !v)}
-            >
-              {showFilters ? 'Hide column filters' : 'Column filters'}
-            </Button>
-            {Object.values(columnFilters).some((v) => v && v.trim()) && (
+            {Object.values(columnFilters).some((v) => isFilterActive(v)) && (
               <Button variant="ghost" onClick={() => setColumnFilters({})}>
-                Clear filters
+                Clear column filters
               </Button>
             )}
           </div>
@@ -245,27 +289,25 @@ export function ImportedDataTab() {
                           <span>{col.label}</span>
                           <Icon className="h-3 w-3 shrink-0" />
                         </button>
+                        {col.key === 'date' ? (
+                          <DateFilter
+                            label={col.label}
+                            dayKeys={optionsByColumn.date}
+                            state={filterFor('date')}
+                            onChange={(next) => setFilter('date', next)}
+                          />
+                        ) : (
+                          <ValueFilter
+                            label={col.label}
+                            options={optionsByColumn[col.key]}
+                            state={filterFor(col.key)}
+                            onChange={(next) => setFilter(col.key, next)}
+                          />
+                        )}
                       </th>
                     );
                   })}
                 </tr>
-                {showFilters && (
-                  <tr>
-                    {COLUMNS.map((col) => (
-                      <th key={col.key} className="p-1">
-                        <Input
-                          value={columnFilters[col.key] ?? ''}
-                          onChange={(e) =>
-                            setColumnFilters((prev) => ({ ...prev, [col.key]: e.target.value }))
-                          }
-                          placeholder="Filter"
-                          aria-label={`Filter ${col.label}`}
-                          className="h-7 min-w-24 text-xs"
-                        />
-                      </th>
-                    ))}
-                  </tr>
-                )}
               </thead>
               <tbody>
                 {isLoading && (
