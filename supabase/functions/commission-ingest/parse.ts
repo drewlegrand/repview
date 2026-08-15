@@ -166,6 +166,8 @@ export function parseGrid(grid: unknown[][], mapping: Mapping) {
 
     const line: ParsedLine = {
       lineType: toText(cell(row, c.lineType)),
+      salesmanNumber: toText(cell(row, c.salesmanNumber)),
+      salesman: toText(cell(row, c.salesman)),
       productCode: toText(cell(row, c.productCode)),
       productName: toText(cell(row, c.productName)),
       quantity: toNumber(cell(row, c.quantity)),
@@ -193,6 +195,11 @@ export function parseGrid(grid: unknown[][], mapping: Mapping) {
       invoiceNumber,
       invoiceNumberNorm: norm,
       documentType: sales < 0 || /CM|CREDIT/i.test(invoiceNumber) ? "credit_memo" : "invoice",
+      lineType: toText(cell(row, c.lineType)),
+      salesmanNumber: toText(cell(row, c.salesmanNumber)),
+      salesman: toText(cell(row, c.salesman)),
+      manufacturerName: toText(cell(row, c.manufacturerName)),
+      manufacturerOffice: toText(cell(row, c.manufacturerOffice)),
       invoiceDate: toDate(cell(row, c.invoiceDate)),
       customerName: toText(cell(row, c.customerName)),
       customerNumber: toText(cell(row, c.customerNumber)),
