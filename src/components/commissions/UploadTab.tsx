@@ -57,6 +57,8 @@ export function UploadTab() {
   const [selectedSheets, setSelectedSheets] = useState<string[]>([]);
   const [busy, setBusy] = useState<'' | 'analyzing' | 'committing'>('');
   const [commitResults, setCommitResults] = useState<Array<Record<string, unknown>> | null>(null);
+  const [usedSavedProfile, setUsedSavedProfile] = useState(false);
+  const [showAllMappings, setShowAllMappings] = useState(false);
 
   const manufacturer = manufacturers.find((m) => m.id === manufacturerId);
 
@@ -65,6 +67,8 @@ export function UploadTab() {
     setMapping(null);
     setSelectedSheets([]);
     setCommitResults(null);
+    setUsedSavedProfile(false);
+    setShowAllMappings(false);
   };
 
   const cancelImport = () => {
@@ -99,7 +103,13 @@ export function UploadTab() {
       });
       const res = result as AnalyzeResult;
       setAnalysis(res);
-      setMapping((manufacturer?.mapping_profile as MappingProfile) ?? res.mapping);
+      const saved = manufacturer?.mapping_profile as MappingProfile | null | undefined;
+      const savedFits =
+        !!saved &&
+        Object.values(saved.columns ?? {}).some((c) => typeof c === 'number') &&
+        Object.values(saved.columns ?? {}).every((c) => c === null || (typeof c === 'number' && c < res.columnCount));
+      setUsedSavedProfile(!!savedFits);
+      setMapping(savedFits ? (saved as MappingProfile) : res.mapping);
       setSelectedSheets(res.sheets);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Could not read that file');
