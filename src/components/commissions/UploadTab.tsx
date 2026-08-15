@@ -67,6 +67,13 @@ export function UploadTab() {
     setCommitResults(null);
   };
 
+  const cancelImport = () => {
+    reset();
+    setFile(null);
+    setStoragePath('');
+    if (fileInput.current) fileInput.current.value = '';
+  };
+
   async function handleFile(selected: File) {
     if (!manufacturerId) {
       toast.error('Pick a manufacturer first');
@@ -262,10 +269,15 @@ export function UploadTab() {
               </div>
             </div>
 
-            <Button onClick={commit} disabled={busy !== '' || !selectedSheets.length}>
-              {busy === 'committing' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Import {selectedSheets.length > 1 ? `${selectedSheets.length} sheets` : 'report'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={commit} disabled={busy !== '' || !selectedSheets.length}>
+                {busy === 'committing' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Import {selectedSheets.length > 1 ? `${selectedSheets.length} sheets` : 'report'}
+              </Button>
+              <Button variant="outline" onClick={cancelImport} disabled={busy !== ''}>
+                Cancel
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
