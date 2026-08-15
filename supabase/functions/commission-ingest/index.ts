@@ -761,8 +761,22 @@ async function reconcile(
         });
       }
     }
+    // Re-importing the same statement must not duplicate product lines:
+    // clear any prior lines for the invoices in this file, then insert fresh.
+    const affectedIds = [...new Set(lineRows.map((r) => r.invoice_id as string))];
+    for (let i = 0; i < affectedIds.length; i += 100) {
+        const { error: delErr } = await supabase
+          .from("commission_invoice_lines")
+          .delete()
+          .eq("user_id", userId)
+          .in("invoice_id", affectedIds.slice(i, i + 100));
+        if (delErr) throw new Error(`Could not replace invoice lines: ${delErr.message}`);
+    }
     for (let i = 0; i < lineRows.length; i += 400) {
-      await supabase.from("commission_invoice_lines").insert(lineRows.slice(i, i + 400));
+        const { error: insErr } = await supabase
+          .from("commission_invoice_lines")
+          .insert(lineRows.slice(i, i + 400));
+        if (insErr) throw new Error(`Could not save invoice lines: ${insErr.message}`);
     }
   }
 
