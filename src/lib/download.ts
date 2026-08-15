@@ -3,11 +3,13 @@
  *
  * Mobile browsers ignore `<a download>` for blob URLs in many cases, so we:
  * 1. Try the Web Share API with a real File (native iOS/Android save sheet).
- * 2. Fall back to an anchor that is actually attached to the DOM.
- * 3. Fall back to opening the blob URL in a new tab.
+ * 2. On mobile, open the generated file in a new tab so the browser's native
+ *    viewer can save/share it (the `download` attribute is unreliable there).
+ * 3. On desktop, use an attached anchor download.
  */
 export async function saveFile(data: BlobPart, filename: string, mimeType: string) {
-  const file = new File([data], filename, { type: mimeType });
+  const blob = new Blob([data], { type: mimeType });
+  const file = new File([blob], filename, { type: mimeType });
 
   const nav = navigator as Navigator & {
     canShare?: (data: ShareData) => boolean;
@@ -21,27 +23,32 @@ export async function saveFile(data: BlobPart, filename: string, mimeType: strin
     } catch (err) {
       // User cancelled the share sheet - nothing else to do.
       if ((err as DOMException)?.name === 'AbortError') return;
-      // Otherwise fall through to the anchor download.
+      // Otherwise fall through to the browser-native file opening path.
     }
   }
 
-  const url = URL.createObjectURL(file);
+  const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = filename;
   anchor.rel = 'noopener';
   anchor.style.display = 'none';
   document.body.appendChild(anchor);
 
-  const supportsDownload = 'download' in anchor;
-  if (supportsDownload) {
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // iOS exposes the download property but frequently ignores it for blob URLs,
+    // especially inside an iframe. A normal new-tab navigation reliably opens
+    // the native document viewer, where Save to Files / Share is available.
+    anchor.target = '_blank';
     anchor.click();
   } else {
-    window.open(url, '_blank');
+    anchor.download = filename;
+    anchor.click();
   }
 
   setTimeout(() => {
     anchor.remove();
     URL.revokeObjectURL(url);
-  }, 10000);
+  }, 60000);
 }
