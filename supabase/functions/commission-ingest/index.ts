@@ -457,6 +457,15 @@ Deno.serve(async (req) => {
     const sheets = body.sheetNames?.length ? body.sheetNames : [allSheets[0]];
     const results: unknown[] = [];
 
+    // The manufacturer picked at import time is authoritative for the
+    // "Manufacturer" column, regardless of what the file says.
+    const { data: manufacturerRow } = await supabase
+      .from("manufacturers")
+      .select("name")
+      .eq("id", body.manufacturerId)
+      .maybeSingle();
+    const manufacturerName: string | null = manufacturerRow?.name ?? null;
+
     for (const sheetName of sheets) {
       const grid = gridOf(wb, sheetName);
       if (!grid.length) continue;
@@ -489,7 +498,15 @@ Deno.serve(async (req) => {
         .single();
       if (repErr) return json({ error: `Could not save report: ${repErr.message}` }, 500);
 
-      const summary = await reconcile(supabase, userId, body.manufacturerId, report.id, invoices, mapping);
+      const summary = await reconcile(
+        supabase,
+        userId,
+        body.manufacturerId,
+        report.id,
+        invoices,
+        mapping,
+        manufacturerName,
+      );
 
       await supabase
         .from("commission_reports")
@@ -538,6 +555,7 @@ async function reconcile(
   reportId: string,
   invoices: ParsedInvoice[],
   mapping: Mapping,
+  manufacturerName: string | null,
 ) {
   let rowsNew = 0;
   let rowsChanged = 0;
@@ -570,7 +588,7 @@ async function reconcile(
       line_type: inv.lineType,
       salesman_number: inv.salesmanNumber,
       salesman: inv.salesman,
-      manufacturer_name: inv.manufacturerName,
+      manufacturer_name: manufacturerName ?? inv.manufacturerName,
       manufacturer_office: inv.manufacturerOffice,
       invoice_date: inv.invoiceDate,
       period_label: mapping.periodLabel,
