@@ -24,22 +24,29 @@ type AnalyzeResult = {
 };
 
 const FIELDS: Array<{ key: string; label: string }> = [
-  { key: 'invoiceNumber', label: 'Invoice / document #' },
-  { key: 'invoiceDate', label: 'Invoice date' },
-  { key: 'customerName', label: 'Customer name' },
+  { key: 'lineType', label: 'Type' },
+  { key: 'salesmanNumber', label: 'Salesman #' },
+  { key: 'salesman', label: 'Salesman' },
+  { key: 'manufacturerName', label: 'Manufacturer' },
+  { key: 'manufacturerOffice', label: 'Manufacturer Office' },
   { key: 'customerNumber', label: 'Customer #' },
-  { key: 'orderReference', label: 'Order reference' },
+  { key: 'customerName', label: 'Customer Name' },
+  { key: 'invoiceDate', label: 'Date' },
+  { key: 'invoiceNumber', label: 'Invoice' },
   { key: 'projectReference', label: 'Project #' },
-  { key: 'projectName', label: 'Project name' },
-  { key: 'salesAmount', label: 'Sales amount' },
-  { key: 'commissionBase', label: 'Commission base' },
-  { key: 'commissionRate', label: 'Commission rate' },
-  { key: 'commissionAmount', label: 'Commission amount' },
-  { key: 'productCode', label: 'Product code' },
-  { key: 'productName', label: 'Product name' },
-  { key: 'quantity', label: 'Quantity' },
-  { key: 'unitPrice', label: 'Unit price' },
-  { key: 'lineType', label: 'Line type' },
+  { key: 'projectName', label: 'Project Name' },
+  { key: 'productCode', label: 'Product #' },
+  { key: 'productName', label: 'Product Name' },
+  { key: 'quantity', label: 'Qty' },
+  { key: 'unitPrice', label: 'Unit Price' },
+  { key: 'salesAmount', label: 'Sales Amount' },
+  { key: 'commissionRate', label: 'Commission Rate' },
+  { key: 'commissionAmount', label: 'Commission Amount' },
+];
+
+const OPTIONAL_FIELDS: Array<{ key: string; label: string }> = [
+  { key: 'orderReference', label: 'Order / job reference' },
+  { key: 'commissionBase', label: 'Commission base (taxable)' },
 ];
 
 export function UploadTab() {
