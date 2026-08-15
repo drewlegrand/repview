@@ -155,6 +155,36 @@ function findColumnRe(header: unknown[], re: RegExp): number | null {
   return null;
 }
 
+/**
+ * Scored header match. `include` patterns add points, `exclude` patterns
+ * disqualify a column outright. This prevents "Commission Rate" from winning
+ * the commission-amount slot just because it appears first.
+ */
+function findColumnScored(
+  header: unknown[],
+  include: string[],
+  exclude: string[] = [],
+): number | null {
+  let bestIdx: number | null = null;
+  let bestScore = 0;
+  for (let i = 0; i < header.length; i++) {
+    const cellValue = header[i];
+    if (typeof cellValue !== "string") continue;
+    const v = cellValue.toLowerCase().replace(/[^a-z0-9%]+/g, " ").trim();
+    if (!v) continue;
+    if (exclude.some((p) => v.includes(p))) continue;
+    let score = 0;
+    include.forEach((p, rank) => {
+      if (v.includes(p)) score = Math.max(score, include.length - rank);
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
+}
+
 /** Salesman # vs. Salesman name live in adjacent, similarly-named columns. */
 function salesmanColumns(header: unknown[]): { number: number | null; name: number | null } {
   const num =
@@ -187,10 +217,22 @@ function heuristicMapping(grid: unknown[][]): Mapping {
     orderReference: findColumn(header, ["order"]),
     projectReference: findColumn(header, ["job", "project no"]),
     projectName: findColumn(header, ["project"]),
-    salesAmount: findColumn(header, ["sales", "net amount", "total amount", "extended"]),
-    commissionBase: findColumn(header, ["comm base", "commissionable", "basis"]),
-    commissionRate: findColumn(header, ["rate", "percent", "pct"]),
-    commissionAmount: findColumn(header, ["commission amount", "commission earned", "commission"]),
+    salesAmount: findColumnScored(
+      header,
+      ["sales amount", "net amount", "total amount", "extended", "sales", "amount"],
+      ["commission", "commision", "rate", "%", "percent", "unit", "price", "qty"],
+    ),
+    commissionBase: findColumnScored(header, ["comm base", "commissionable", "basis", "base"], ["rate", "%"]),
+    commissionRate: findColumnScored(
+      header,
+      ["commission rate", "rate", "percent", "pct", "%"],
+      ["amount", "amt", "earned"],
+    ),
+    commissionAmount: findColumnScored(
+      header,
+      ["commission amount", "commission earned", "comm amt", "commission", "earned"],
+      ["rate", "%", "percent", "base", "commissionable"],
+    ),
     productCode: findColumn(header, ["item", "sku", "product code", "part"]),
     productName: findColumn(header, ["description", "product"]),
     quantity: findColumn(header, ["qty", "quantity"]),
@@ -248,10 +290,36 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   const columns = { ...m.columns };
 
   const byLabel = {
-    salesAmount: findColumn(header, ["sales", "amount", "net", "extended", "invoice total"]),
-    commissionBase: findColumn(header, ["base", "commissionable", "basis"]),
-    commissionRate: findColumn(header, ["rate", "%", "percent", "pct"]),
-    commissionAmount: findColumn(header, ["commision", "commission", "comm earned", "comm amt", "earned"]),
+    salesAmount: findColumnScored(
+      header,
+      ["sales amount", "net amount", "invoice total", "extended", "sales", "amount", "net"],
+      ["commission", "commision", "comm ", "rate", "%", "percent", "unit", "per unit", "price", "qty"],
+    ),
+    commissionBase: findColumnScored(
+      header,
+      ["commission base", "commissionable", "comm base", "basis", "base"],
+      ["rate", "%", "percent"],
+    ),
+    commissionRate: findColumnScored(
+      header,
+      ["commission rate", "comm rate", "rate", "percent", "pct", "%"],
+      ["amount", "amt", "earned", "total"],
+    ),
+    commissionAmount: findColumnScored(
+      header,
+      [
+        "commission amount",
+        "commision amount",
+        "comm amount",
+        "comm amt",
+        "commission earned",
+        "commission due",
+        "commission",
+        "commision",
+        "earned",
+      ],
+      ["rate", "%", "percent", "pct", "base", "commissionable"],
+    ),
   };
 
   // Prefer the most specific label match for each money column, and never let
@@ -293,23 +361,31 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   fill("manufacturerName", findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]));
   fill("manufacturerOffice", findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]));
 
-  // Last resort: if there is still no commission column, look for a numeric
-  // column whose total matches base x rate.
-  if (columns.commissionAmount === null || columns.commissionAmount === undefined) {
+  // Numeric sanity check: the commission column's total must be close to
+  // base x rate. If it is missing OR way off (e.g. it points at the rate
+  // column), find the numeric column whose total matches.
+  {
     const width = Math.max(...grid.map((r) => r?.length ?? 0), 0);
     const rows = grid.slice(m.dataStartRow, m.dataEndRow + 1);
     const sumOf = (ci: number) =>
       rows.reduce((s, r) => s + (toNumber(r?.[ci]) ?? 0), 0);
+    const baseCol = (columns.commissionBase ?? columns.salesAmount) as number | null | undefined;
     const expected = rows.reduce((s, r) => {
-      const base = toNumber(r?.[columns.commissionBase as number]) ?? 0;
+      const base = toNumber(r?.[baseCol as number]) ?? 0;
       const rate = toNumber(r?.[columns.commissionRate as number]) ?? 0;
       return s + base * rate;
     }, 0);
-    if (Math.abs(expected) > 0.01) {
+    const currentCol = columns.commissionAmount;
+    const currentSum =
+      currentCol === null || currentCol === undefined ? null : sumOf(currentCol);
+    const tolerance = Math.max(1, Math.abs(expected) * 0.05);
+    const needsFix =
+      currentSum === null || Math.abs(currentSum - expected) > tolerance;
+    if (Math.abs(expected) > 0.01 && needsFix) {
       let bestCol: number | null = null;
       let bestDelta = Infinity;
       for (let ci = 0; ci < width; ci++) {
-        if (taken.has(ci)) continue;
+        if (ci === baseCol || ci === columns.commissionRate) continue;
         const delta = Math.abs(sumOf(ci) - expected);
         if (delta < bestDelta) {
           bestDelta = delta;
