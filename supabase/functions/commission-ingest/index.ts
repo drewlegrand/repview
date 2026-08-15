@@ -278,10 +278,36 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   const columns = { ...m.columns };
 
   const byLabel = {
-    salesAmount: findColumn(header, ["sales", "amount", "net", "extended", "invoice total"]),
-    commissionBase: findColumn(header, ["base", "commissionable", "basis"]),
-    commissionRate: findColumn(header, ["rate", "%", "percent", "pct"]),
-    commissionAmount: findColumn(header, ["commision", "commission", "comm earned", "comm amt", "earned"]),
+    salesAmount: findColumnScored(
+      header,
+      ["sales amount", "net amount", "invoice total", "extended", "sales", "amount", "net"],
+      ["commission", "commision", "comm ", "rate", "%", "percent", "unit", "per unit", "price", "qty"],
+    ),
+    commissionBase: findColumnScored(
+      header,
+      ["commission base", "commissionable", "comm base", "basis", "base"],
+      ["rate", "%", "percent"],
+    ),
+    commissionRate: findColumnScored(
+      header,
+      ["commission rate", "comm rate", "rate", "percent", "pct", "%"],
+      ["amount", "amt", "earned", "total"],
+    ),
+    commissionAmount: findColumnScored(
+      header,
+      [
+        "commission amount",
+        "commision amount",
+        "comm amount",
+        "comm amt",
+        "commission earned",
+        "commission due",
+        "commission",
+        "commision",
+        "earned",
+      ],
+      ["rate", "%", "percent", "pct", "base", "commissionable"],
+    ),
   };
 
   // Prefer the most specific label match for each money column, and never let
