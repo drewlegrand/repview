@@ -146,6 +146,26 @@ function findColumn(header: unknown[], patterns: string[]): number | null {
   return null;
 }
 
+function findColumnRe(header: unknown[], re: RegExp): number | null {
+  for (let i = 0; i < header.length; i++) {
+    const cell = header[i];
+    if (typeof cell !== "string") continue;
+    if (re.test(cell.trim())) return i;
+  }
+  return null;
+}
+
+/** Salesman # vs. Salesman name live in adjacent, similarly-named columns. */
+function salesmanColumns(header: unknown[]): { number: number | null; name: number | null } {
+  const num =
+    findColumnRe(header, /^salesman\s*#$/i) ??
+    findColumn(header, ["salesman no", "salesman num", "salesman id", "rep no", "rep num", "rep id"]);
+  const name =
+    findColumnRe(header, /^(salesman\s*2|salesman(\s*name)?|salesperson|rep\s*name)$/i) ??
+    findColumn(header, ["salesman2", "salesman name", "rep name", "salesperson"]);
+  return { number: num, name: name === num ? null : name };
+}
+
 /** Deterministic fallback used when the model can't produce a usable mapping. */
 function heuristicMapping(grid: unknown[][]): Mapping {
   let headerRow = 0;
