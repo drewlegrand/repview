@@ -116,14 +116,11 @@ export function ImportedDataTab() {
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-xs text-muted-foreground">
                 <tr>
-                  <th className="p-2 text-left">Type</th>
-                  <th className="p-2 text-left">Salesman #</th>
-                  <th className="p-2 text-left">Salesman</th>
+                  <th className="p-2 text-left">Date</th>
                   <th className="p-2 text-left">Manufacturer</th>
-                  <th className="p-2 text-left">Office</th>
+                  <th className="p-2 text-left">Manufacturer Office</th>
                   <th className="p-2 text-left">Customer #</th>
                   <th className="p-2 text-left">Customer Name</th>
-                  <th className="p-2 text-left">Date</th>
                   <th className="p-2 text-left">Invoice</th>
                   <th className="p-2 text-left">Project #</th>
                   <th className="p-2 text-left">Project Name</th>
@@ -139,7 +136,7 @@ export function ImportedDataTab() {
               <tbody>
                 {isLoading && (
                   <tr>
-                    <td colSpan={18} className="p-6 text-center text-muted-foreground">
+                    <td colSpan={15} className="p-6 text-center text-muted-foreground">
                       Loading imported data…
                     </td>
                   </tr>
@@ -150,16 +147,11 @@ export function ImportedDataTab() {
                     const line = r.kind === 'line' ? r.line : null;
                     return (
                       <tr key={`${inv.id}-${idx}`} className="border-t">
-                        <td className="p-2">{line ? line.line_type ?? '—' : inv.line_type ?? '—'}</td>
-                        <td className="p-2">
-                          {line ? line.salesman_number ?? '—' : inv.salesman_number ?? '—'}
-                        </td>
-                        <td className="p-2">{line ? line.salesman ?? '—' : inv.salesman ?? '—'}</td>
+                        <td className="p-2">{formatDate(inv.invoice_date)}</td>
                         <td className="p-2">{inv.manufacturer_name ?? '—'}</td>
                         <td className="p-2">{inv.manufacturer_office ?? '—'}</td>
                         <td className="p-2">{inv.customer_number ?? '—'}</td>
                         <td className="p-2">{inv.customer_name ?? '—'}</td>
-                        <td className="p-2">{formatDate(inv.invoice_date)}</td>
                         <td className="p-2 font-mono">{inv.invoice_number}</td>
                         <td className="p-2">{inv.project_reference ?? '—'}</td>
                         <td className="p-2">{inv.project_name ?? '—'}</td>
@@ -183,7 +175,7 @@ export function ImportedDataTab() {
                   })}
                 {!isLoading && !rows.length && (
                   <tr>
-                    <td colSpan={18} className="p-6 text-center text-muted-foreground">
+                    <td colSpan={15} className="p-6 text-center text-muted-foreground">
                       No imported data yet. Upload a report on the Import report tab.
                     </td>
                   </tr>
@@ -192,7 +184,7 @@ export function ImportedDataTab() {
               {!isLoading && rows.length > 0 && (
                 <tfoot className="bg-muted/50 text-xs font-medium">
                   <tr>
-                    <td colSpan={15} className="p-2 text-right">
+                    <td colSpan={12} className="p-2 text-right">
                       {rows.length} row{rows.length === 1 ? '' : 's'}
                     </td>
                     <td className="p-2 text-right">{money(totals.sales)}</td>
