@@ -1,13 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import {
   CommissionInvoiceLine,
   money,
@@ -99,19 +93,23 @@ export function ImportedDataTab() {
               onChange={(e) => setSearch(e.target.value)}
               className="sm:w-80"
             />
-            <Select value={manufacturerId} onValueChange={setManufacturerId}>
-              <SelectTrigger className="sm:w-56">
-                <SelectValue placeholder="All manufacturers" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All manufacturers</SelectItem>
-                {manufacturers.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
-                    {m.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <select
+              value={manufacturerId}
+              onChange={(e) => setManufacturerId(e.target.value)}
+              aria-label="Filter by manufacturer"
+              className={cn(
+                'h-10 rounded-md border border-input bg-background px-3 py-2 text-sm',
+                'ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                'sm:w-56',
+              )}
+            >
+              <option value="all">All manufacturers</option>
+              {manufacturers.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="overflow-x-auto rounded-md border">
