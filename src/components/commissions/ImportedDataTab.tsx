@@ -2,10 +2,8 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, ArrowUp, ChevronsUpDown, Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { saveFile } from '@/lib/download';
 import {
   ColumnFilterState,
   DateFilter,
@@ -221,85 +219,6 @@ export function ImportedDataTab() {
     );
   }, [rows]);
 
-  const buildSheet = () => {
-    const header = COLUMNS.map((c) => c.label);
-    const body = rows.map((row) =>
-      COLUMNS.map((col) => {
-        const raw = row.values[col.key];
-        if (col.key === 'date') return raw == null ? '' : new Date(Number(raw));
-        if (col.type === 'number') return raw == null ? null : Number(raw);
-        return raw == null ? '' : String(raw);
-      }),
-    );
-    const sheet = XLSX.utils.aoa_to_sheet([header, ...body], { cellDates: true });
-    sheet['!cols'] = COLUMNS.map((col) => ({
-      wch: Math.max(
-        col.label.length + 2,
-        ...rows.slice(0, 500).map((r) => String(r.display[col.key] ?? '').length + 2),
-      ),
-    }));
-    const fmt: Partial<Record<ColumnKey, string>> = {
-      date: 'mm/dd/yyyy',
-      unitPrice: '$#,##0.00;($#,##0.00);-',
-      salesAmount: '$#,##0.00;($#,##0.00);-',
-      commissionAmount: '$#,##0.00;($#,##0.00);-',
-      commissionRate: '0.00%',
-      qty: '#,##0;(#,##0);-',
-    };
-    rows.forEach((_, r) => {
-      COLUMNS.forEach((col, c) => {
-        const z = fmt[col.key];
-        if (!z) return;
-        const cell = sheet[XLSX.utils.encode_cell({ r: r + 1, c })];
-        if (cell && cell.v !== '' && cell.v !== null) cell.z = z;
-      });
-    });
-    COLUMNS.forEach((_, c) => {
-      const cell = sheet[XLSX.utils.encode_cell({ r: 0, c })];
-      if (cell) cell.s = { font: { bold: true } };
-    });
-    sheet['!autofilter'] = {
-      ref: XLSX.utils.encode_range(
-        { r: 0, c: 0 },
-        { r: rows.length, c: COLUMNS.length - 1 },
-      ),
-    };
-    sheet['!freeze'] = 'A2';
-    return sheet;
-  };
-
-  const stamp = () => new Date().toISOString().slice(0, 10);
-
-  const exportExcel = async () => {
-    const wb = XLSX.utils.book_new();
-    const sheet = buildSheet();
-    XLSX.utils.book_append_sheet(wb, sheet, 'Imported data');
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
-    await saveFile(
-      buf,
-      `commission-imported-data-${stamp()}.xlsx`,
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-  };
-
-  const exportCsv = async () => {
-    const header = COLUMNS.map((c) => c.label);
-    const body = rows.map((row) =>
-      COLUMNS.map((col) => {
-        const raw = row.values[col.key];
-        if (col.key === 'date') return row.dayKey === '(blank)' ? '' : row.dayKey;
-        if (col.type === 'number') return raw == null ? '' : Number(raw);
-        return raw == null ? '' : String(raw);
-      }),
-    );
-    const csv = XLSX.utils.sheet_to_csv(XLSX.utils.aoa_to_sheet([header, ...body]));
-    await saveFile(
-      `\uFEFF${csv}`,
-      `commission-imported-data-${stamp()}.csv`,
-      'text/csv;charset=utf-8;',
-    );
-  };
-
   return (
     <div className="space-y-6">
       <Card>
@@ -340,16 +259,6 @@ export function ImportedDataTab() {
                 Clear column filters
               </Button>
             )}
-            <div className="flex gap-2 sm:ml-auto">
-              <Button variant="outline" onClick={exportCsv} disabled={!rows.length}>
-                <Download className="mr-1.5 h-4 w-4" />
-                CSV
-              </Button>
-              <Button variant="outline" onClick={exportExcel} disabled={!rows.length}>
-                <Download className="mr-1.5 h-4 w-4" />
-                Excel
-              </Button>
-            </div>
           </div>
 
           <div className="overflow-x-auto rounded-md border">
