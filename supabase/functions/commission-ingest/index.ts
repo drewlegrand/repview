@@ -281,6 +281,18 @@ export function repairMapping(m: Mapping, grid: unknown[][]): Mapping {
   claim("commissionBase", byLabel.commissionBase !== null);
   claim("salesAmount", byLabel.salesAmount !== null);
 
+  // Text columns the model often skips: fill in from header labels when absent.
+  const sm = salesmanColumns(header);
+  const fill = (key: keyof Mapping["columns"], found: number | null) => {
+    const current = columns[key];
+    if ((current === null || current === undefined) && found !== null) columns[key] = found;
+  };
+  fill("lineType", findColumnRe(header, /^type$/i) ?? findColumn(header, ["line type", "doc type", "type"]));
+  fill("salesmanNumber", sm.number);
+  fill("salesman", sm.name);
+  fill("manufacturerName", findColumn(header, ["manufacturer", "mfr", "mfg", "vendor", "supplier"]));
+  fill("manufacturerOffice", findColumn(header, ["manufacturer office", "mfr office", "office", "branch", "plant"]));
+
   // Last resort: if there is still no commission column, look for a numeric
   // column whose total matches base x rate.
   if (columns.commissionAmount === null || columns.commissionAmount === undefined) {
